@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --main-color: #4FE3C1;
+}
+
+html {
+    height: -webkit-fill-available;
+}
+
+body::-webkit-scrollbar{
+    display: none;
+}
+
+body {
+    margin: 0;
+    color: #363A3F;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    background: linear-gradient(45deg, #eaeaea, transparent);
+}
+
+#root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
+.app {
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen {
+    width: 100%;
+    height: 100%;
+    background: #FFFFFF;
+}
+
+@media screen and (min-width: 768px) {
+    .screen {
+        max-width: 420px;
+        max-height: 800px;
+        border: 1px solid #d2d2d2;
+    }
+}
+
+.bg-main {
+    background-color: var(--main-color);
+}
+
+.bg-grey {
+    background-color: #F4F4F5;
+}
+
+.bg-grey-two {
+    background-color: #F4F4F5;
+}
+
+.bg-grey-three {
+    background-color: #E9E9EB;
+}
+
+.bg-black {
+    background-color: #17191C;
+}
+
+.bg-dark-grey {
+    background-color: #282B2E;
+}
+
+.bg-red {
+    background-color: #FFE2E9;
+}
+
+.bg-green {
+    background-color: #D8F5EF;
+}
+
+.text-grey-two {
+    color: #91919D;
+}
+
+.border-grey {
+    border: 1px solid #91919D;
+}
+
+.text-grey {
+    color: #91919D;
+}
+
+.disappear {
+    animation: disappear 0.25s forwards;
+    animation-delay: 1.25s;
+}
+
+@keyframes disappear {
+    from { opacity: 1 }
+    to { opacity: 0 }
+}
+
+.title-bar {
+    height: 64px;
+    width: 100%;
+    position: sticky;
+    top: 0;
+}
+
+pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+}
+
+.custom-scollbar::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+.custom-scollbar::-webkit-scrollbar-track {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.custom-scollbar::-webkit-scrollbar-thumb {
+    background-color: white;
+    outline: none;
+}
+
+.menu .menu__item {
+    border-bottom: 1px solid #f3f3f3;
+}
+
+.menu .menu__item:last-child {
+    border-bottom: none;
+}
+
+.fs-15 {
+    font-size: 15px;
+}
