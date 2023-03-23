@@ -1,9 +1,9 @@
-name: Build
+name: Static Analysis
 on: workflow_dispatch
 
 jobs:
-  build:
-    name: Build
+  static_analysis:
+    name: Static Analysis
     runs-on: ubuntu-latest
 
     steps:
