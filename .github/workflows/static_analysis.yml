@@ -9,6 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get Hash
+        id: hash
+        run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_HASH
+
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
@@ -20,7 +24,7 @@ jobs:
         uses: veracode/veracode-uploadandscan-action@0.2.4
         with:
           appname: 'Minima APK + MiniDAPPS'
-          version: Filez v${{ steps.package-version.outputs.current-version}} - Github
+          version: Maximize v${{ steps.package-version.outputs.current-version}} - Github - ${{ env.hash }}
           createprofile: false
           filepath: 'maximize-src-${{ steps.package-version.outputs.current-version}}.mds.zip'
           vid: '${{ secrets.VERACODE_API_ID }}'
