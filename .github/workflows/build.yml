@@ -31,15 +31,5 @@ jobs:
       - name: Artifact build files
         uses: actions/upload-artifact@v3
         with:
-          name: filez-${{ steps.package-version.outputs.current-version}}.mds
-          path: filez-${{ steps.package-version.outputs.current-version}}.mds.zip
-
-      - name: Veracode Upload And Scan
-        uses: veracode/veracode-uploadandscan-action@0.2.4
-        with:
-          appname: 'Minima APK + MiniDAPPS'
-          version: Filez v${{ steps.package-version.outputs.current-version}} - Github
-          createprofile: false
-          filepath: 'filez-${{ steps.package-version.outputs.current-version}}.mds.zip'
-          vid: '${{ secrets.VERACODE_API_ID }}'
-          vkey: '${{ secrets.VERACODE_API_KEY }}'
+          name: maximize-${{ steps.package-version.outputs.current-version}}.mds
+          path: maximize-${{ steps.package-version.outputs.current-version}}.mds.zip
