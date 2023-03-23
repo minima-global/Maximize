@@ -9,6 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DD HH:mm:ss
+          utcOffset: "0"
+
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
@@ -20,7 +27,7 @@ jobs:
         uses: veracode/veracode-uploadandscan-action@0.2.4
         with:
           appname: 'Minima APK + MiniDAPPS'
-          version: Maximize v${{ steps.package-version.outputs.current-version}} - Github - ${{ github.head_ref }}
+          version: Maximize v${{ steps.package-version.outputs.current-version}} - Github - ${{ steps.current-time.outputs.formattedTime }}
           createprofile: false
           filepath: 'maximize-src-${{ steps.package-version.outputs.current-version}}.mds.zip'
           vid: '${{ secrets.VERACODE_API_ID }}'
