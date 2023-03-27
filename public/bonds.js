@@ -71,12 +71,13 @@ function requestBond(currentblock, amount, bondtype){
   })
 }
 
-function cancelBond(coinid,amount,pubkey){
+function cancelBond(coinid,amount){
   return new Promise((resolve) => {
     MDS.cmd("getaddress",function(resp){
 
       //Get an address
       var address = resp.response.miniaddress;
+      var pubkey  	= resp.response.publickey;
 
       //Random ID
       var randid = Math.floor(Math.random() * 1000000000)+"";
@@ -94,4 +95,23 @@ function cancelBond(coinid,amount,pubkey){
       });
     });
   })
+}
+
+function getCoins() {
+  return new Promise((resolve, reject) => {
+    MDS.cmd("coins address:"+BOND_ADDRESS,function(resp){
+      var allcoins = resp.response;
+      var totalsize = allcoins.length;
+
+      if(totalsize>HEAVY_LOAD){
+        reject('HEAVY_LOAD');
+      }
+
+      MDS.cmd("coins order:asc relevant:true address:"+BOND_ADDRESS,function(resp){
+        var coins = resp.response;
+
+        resolve(coins);
+      });
+    });
+  });
 }

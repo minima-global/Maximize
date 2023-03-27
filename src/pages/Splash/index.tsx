@@ -26,7 +26,7 @@ const Splash = () => {
   }
 
   return (
-    <div className="bg-black absolute h-full w-full">
+    <div className="bg-black absolute h-full w-full z-20">
       {displaySplash && (
         <div className="disappear bg-main flex justify-center items-center h-full w-full absolute z-10">
           <div className="mb-28">
@@ -78,13 +78,13 @@ const Splash = () => {
       )}
       {step === 1 && (
         <div onClick={() => setStep(2)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center text-white">
-          <div className="text-3xl mb-16">Hello</div>
+          <div className="text-primary text-2xl mb-16">Hello</div>
           <div className="absolute bottom-20">Tap anywhere to continue</div>
         </div>
       )}
       {step === 2 && (
         <div onClick={() => setStep(3)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center  text-white">
-          <div className="text-3xl mb-16" style={{ lineHeight: '46px' }}>
+          <div className="text-primary text-2xl mb-16" style={{ lineHeight: '46px' }}>
             Lock up Native
             <span className="block lg:none" />
             Minima in your
@@ -96,7 +96,7 @@ const Splash = () => {
       )}
       {step === 3 && (
         <div onClick={() => setStep(4)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center text-white">
-          <div className="text-3xl mb-16" style={{ lineHeight: '46px' }}>
+          <div className="text-primary text-2xl mb-16" style={{ lineHeight: '46px' }}>
             Earn up to 18%
             <span className="block lg:none" />
             yield on your stake
@@ -110,7 +110,7 @@ const Splash = () => {
       )}
       {step === 4 && (
         <div onClick={() => setStep(5)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center  text-white">
-          <div className="text-3xl mb-16" style={{ lineHeight: '46px' }}>
+          <div className="text-primary text-2xl mb-16" style={{ lineHeight: '46px' }}>
             Choose your lock up
             <span className="block lg:none" />
             duration, and collect
@@ -124,7 +124,7 @@ const Splash = () => {
       )}
       {step === 5 && (
         <div onClick={goToDashboard} className="cursor-pointer relative flex justify-center items-center h-full w-full text-white">
-          <div className="text-3xl mb-16">Let’s go</div>
+          <div className="text-primary text-2xl mb-16">Let’s go</div>
           <div className="absolute bottom-20">Tap anywhere to continue</div>
         </div>
       )}

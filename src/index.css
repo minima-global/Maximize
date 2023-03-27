@@ -48,14 +48,6 @@ body {
     background: #FFFFFF;
 }
 
-@media screen and (min-width: 768px) {
-    .screen {
-        max-width: 420px;
-        max-height: 800px;
-        border: 1px solid #d2d2d2;
-    }
-}
-
 .bg-main {
     background-color: var(--main-color);
 }
@@ -80,6 +72,10 @@ body {
     background-color: #282B2E;
 }
 
+.bg-dark-grey:disabled {
+    background-color: #D3D3D8;
+}
+
 .bg-red {
     background-color: #FFE2E9;
 }
@@ -98,6 +94,14 @@ body {
 
 .text-grey {
     color: #91919D;
+}
+
+.text-grey-three {
+    color: #282B2E;
+}
+
+.text-primary {
+    color: #4FE3C1;
 }
 
 .disappear {
@@ -138,6 +142,7 @@ pre {
 }
 
 .menu .menu__item {
+    background: white;
     border-bottom: 1px solid #f3f3f3;
 }
 
@@ -147,4 +152,8 @@ pre {
 
 .fs-15 {
     font-size: 15px;
+}
+
+.text-2\.5xl {
+    font-size: 27px;
 }

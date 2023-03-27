@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { createContext, useEffect, useState } from "react";
-import { availableBalance, sql } from "./__minima__";
+import { createContext, useEffect, useState } from 'react';
+import { availableBalance, sql, block } from './__minima__';
 
 export const appContext = createContext({} as any);
 
 const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [loaded, setLoaded] = useState(false);
   const [balance, setBalance] = useState(0);
+  const [currentBlock, setCurrentBlock] = useState<number | null>(null);
+  const [heavyLoad, setHeavyLoad] = useState(false);
+  const [transactions, setTransactions] = useState();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [_notification, _setNotification] = useState<any>({
     display: false,
@@ -15,26 +18,69 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   });
 
   useEffect(() => {
-    (window as any).MDS.init(() => {
-      setLoaded(true);
-    }, []);
-  });
+    if (!loaded) {
+      (window as any).MDS.init(async (msg: any) => {
+        console.log(msg);
 
-  useEffect(() => {
-    (async () => {
-      await sql(`CREATE TABLE IF NOT EXISTS cache (name varchar(255), data longtext);`);
-      const showOnboarding = await sql(`SELECT * FROM cache WHERE name = 'SHOW_ONBOARDING'`);
+        if(msg.event === "inited"){
+          await sql(`DROP TABLE cache IF EXISTS;`);
+          await sql(`CREATE TABLE IF NOT EXISTS cache (name varchar(255), data longtext);`);
+          const showOnboarding = await sql(`SELECT * FROM cache WHERE name = 'SHOW_ONBOARDING'`);
 
-      if (!showOnboarding) {
-        setShowOnboarding(true);
-      }
+          if (!showOnboarding) {
+            setShowOnboarding(true);
+          }
 
-      // get balance
-      availableBalance().then((response: any) => {
-        setBalance(Number(response));
+          // get balance
+          availableBalance().then((response: any) => {
+            setBalance(Number(response));
+          });
+
+          // get current block
+          block().then((response: any) => {
+            setCurrentBlock(Number(response));
+          });
+
+          // get coins
+          (window as any)
+            .getCoins()
+            .then((response: any) => {
+              setTransactions(response);
+            })
+            .catch((reason: any) => {
+              if (reason === 'HEAVY_LOAD') {
+                setHeavyLoad(true);
+              }
+            });
+
+          setLoaded(true);
+        }
+
+        if(msg.event === "NEWBLOCK"){
+          setCurrentBlock(Number(msg.data.txpow.header.block));
+        }
+
+        if (msg.event === "NEWBALANCE") {
+          // get balance
+          availableBalance().then((response: any) => {
+            setBalance(Number(response));
+          });
+
+          // get coins
+          (window as any)
+            .getCoins()
+            .then((response: any) => {
+              setTransactions(response);
+            })
+            .catch((reason: any) => {
+              if (reason === 'HEAVY_LOAD') {
+                setHeavyLoad(true);
+              }
+            });
+        }
       });
-    })();
-  }, []);
+    }
+  }, [loaded]);
 
   const dismissOnboarding = async () => {
     setShowOnboarding(false);
@@ -52,6 +98,9 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const value = {
     loaded,
     balance,
+    heavyLoad,
+    currentBlock,
+    transactions,
     _notification,
     showOnboarding,
     dismissOnboarding,

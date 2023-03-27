@@ -18,7 +18,7 @@ const Help = () => {
             <div className="w-full flex justify-end mb-5">
               <img onClick={toggleDisplaySmartContract} className="cursor-pointer" src={whiteX} alt="close" />
             </div>
-            <p className="mb-4">Here is the contract for the more technically minded</p>
+            <p className="mb-4">Here is the contract for the more technically minded:</p>
             <pre className="w-full break-word overflow-y-scroll pr-3 custom-scollbar">
               {`/* Escape */
 LET yourkey = PREVSTATE(100)
@@ -64,16 +64,13 @@ RETURN VERIFYOUT(@INPUT fcaddress fullvalue @TOKENID TRUE)`}
         </div>
       )}
       <TitleBar />
-      <div className="flex flex-col gap-5 p-8">
+      <div className="max-w-xl mx-auto lg:mt-14 flex flex-col gap-5 p-5">
         <h1 className="text-2xl font-bold mb-2">How does Maximize work?</h1>
         <p>Minima Bonds are a completely non-custodial yield mechanism.</p>
-        <p>
-          You lock up funds for a period of time, and in return get more sent back to you after a certain delay via Future Cash. At no stage do you 'send' the funds to anyone who
-          can take them.
-        </p>
+        <p>You lock up funds for a period of time, and in return get more sent back to you after a certain delay via Future Cash. At no stage do you 'send' the funds to anyone who can take them.</p>
         <p>You send funds to a contract that will ONLY allow the funds to be sent back to you with the correct Rate and Duration.</p>
         <p>The values are checked at the client and the server.</p>
-        <p>At any stage - before your request is accepted - you can cancel and send the funds back to yourself" </p>
+        <p>At any stage - before your request is accepted - you can cancel and send the funds back to yourself"</p>
         <p onClick={toggleDisplaySmartContract} className="cursor-pointer">
           <span className="border-b border-black pb-1">View smart contract</span>
         </p>
