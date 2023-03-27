@@ -10,6 +10,7 @@
 
 html {
     height: -webkit-fill-available;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
 }
 
 body::-webkit-scrollbar{
@@ -119,6 +120,7 @@ body {
     width: 100%;
     position: sticky;
     top: 0;
+    z-index: 49;
 }
 
 pre {
@@ -156,4 +158,50 @@ pre {
 
 .text-2\.5xl {
     font-size: 27px;
+}
+
+.input {
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.input-active:focus {
+    border-color: #4FE3C1;
+}
+
+.tooltip {
+    position: relative;
+    border: 2px solid #585F63;
+    border-radius: 4px;
+    padding: 15px;
+    background: white;
+    color: #011831;
+    margin-top: -4px;
+}
+
+.tooltip-hook {
+    position: absolute;
+    z-index: 40;
+}
+
+.tooltip-hook::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 14px;
+    border-style: solid;
+    border-color: transparent transparent #585F63 transparent;
+}
+
+.tooltip-hook::after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    margin-left: -9px;
+    border-width: 17px;
+    border-style: solid;
+    border-color: transparent transparent white transparent;
 }

@@ -13,7 +13,7 @@ const Help = () => {
   return (
     <div>
       {displaySmartContract && (
-        <div className="absolute top-0 left-0 h-full w-full bg-black text-white text-sm p-8 z-10">
+        <div className="absolute top-0 left-0 h-full w-full bg-black text-white text-sm p-8 z-50">
           <div className="h-full flex flex-col">
             <div className="w-full flex justify-end mb-5">
               <img onClick={toggleDisplaySmartContract} className="cursor-pointer" src={whiteX} alt="close" />
@@ -66,13 +66,13 @@ RETURN VERIFYOUT(@INPUT fcaddress fullvalue @TOKENID TRUE)`}
       <TitleBar />
       <div className="max-w-xl mx-auto lg:mt-14 flex flex-col gap-5 p-5">
         <h1 className="text-2xl font-bold mb-2">How does Maximize work?</h1>
-        <p>Minima Bonds are a completely non-custodial yield mechanism.</p>
-        <p>You lock up funds for a period of time, and in return get more sent back to you after a certain delay via Future Cash. At no stage do you 'send' the funds to anyone who can take them.</p>
-        <p>You send funds to a contract that will ONLY allow the funds to be sent back to you with the correct Rate and Duration.</p>
-        <p>The values are checked at the client and the server.</p>
-        <p>At any stage - before your request is accepted - you can cancel and send the funds back to yourself"</p>
+        <p>Maximize is a completely non-custodial yield mechanism.</p>
+        <p>You lock up Native Minima (MINIMA) for a period of time and in return get more Minima sent back to you after a set period of time via FutureCash.</p>
+        <p>At no stage do you 'send' the funds to anyone who can take them.</p>
+        <p>You send funds to a contract that will only allow the funds to be sent back to you with the correct Rate and Duration.</p>
+        <p>Before your request is confirmed, you can cancel the stake to send your Minima back to yourself if you wish.</p>
         <p onClick={toggleDisplaySmartContract} className="cursor-pointer">
-          <span className="border-b border-black pb-1">View smart contract</span>
+          <span className="border-b border-black pb-1">View the contract</span>
         </p>
       </div>
     </div>

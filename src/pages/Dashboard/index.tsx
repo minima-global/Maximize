@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import help from '../../assets/help.svg';
+import helpActive from '../../assets/help_active.svg';
 import XBlack from '../../assets/x_black.svg';
 import expandMore from '../../assets/expand_more.svg';
 import TitleBar from '../../components/TitleBar';
@@ -8,6 +8,9 @@ import { useContext } from 'react';
 import { appContext } from '../../AppContext';
 import config from '../../config';
 import { block } from '../../__minima__';
+import { Link } from 'react-router-dom';
+import PendingTransactions from '../PendingTransactions';
+import { getEstimatedPayoutTime } from "../../utilities";
 
 const Dashboard = () => {
   const { balance, heavyLoad, showOnboarding } = useContext(appContext);
@@ -16,6 +19,9 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showSelect, setShowSelect] = React.useState(false);
   const [percent, setPercent] = React.useState<null | { months: number; humanReadableRate: number; rate: number }>(null);
+  const [showPendingTransactions, setShowPendingTransactions] = React.useState(false);
+  const [typingOnFocus, setTypingOnFocus] = React.useState(false);
+  const [showForHowLongTooltip, setShowForHowLongTooltip] = React.useState(false);
 
   const notEnoughFunds = React.useMemo(() => {
     return Number(price) > balance;
@@ -64,6 +70,10 @@ const Dashboard = () => {
     return <div />;
   }
 
+  if (showPendingTransactions) {
+    return <PendingTransactions close={() => setShowPendingTransactions(false)} />;
+  }
+
   return (
     <div className={`h-full ${step === 'form' ? 'bg-grey' : ''}`}>
       {heavyLoad && (
@@ -79,19 +89,21 @@ const Dashboard = () => {
           <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
         </div>
       )}
-      <TitleBar home />
+      <TitleBar home showPendingTransaction={() => setShowPendingTransactions(true)} />
       {step === 'form' && (
         <div className="max-w-lg mx-auto lg:pt-10">
           <div className="flex flex-col gap-5 p-5">
             <h1 className="text-2xl font-bold">Maximize your Minima</h1>
-            <p>Complete the fields below to lock your  Native Minima (MINIMA)</p>
+            <p>Complete the fields below to lock your Native Minima (MINIMA)</p>
             <p>How much would you like to lock?</p>
             <div className="bg-grey-three w-full rounded-md w-full relative">
               <input
                 type="text"
                 value={price}
+                onFocus={() => setTypingOnFocus(true)}
+                onBlur={() => setTypingOnFocus(false)}
                 onChange={(evt: React.ChangeEvent<HTMLInputElement>) => setPrice(evt.target.value)}
-                className="bg-transparent w-full px-4 py-3 pr-20 outline-none"
+                className="bg-transparent input input-active w-full px-4 py-3 pr-20 outline-none"
                 placeholder={`Min ${config.minPrice} / Max ${config.maxPrice}`}
               />
               <div onClick={() => setPrice(config.maxPrice)} className="cursor-pointer text-grey-three absolute top-0 h-full flex items-center right-4">
@@ -100,10 +112,21 @@ const Dashboard = () => {
             </div>
             {notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">You do not have the funds</div>}
             {overMaxAmount && !notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">Please enter a value under the max amount</div>}
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <p>For how long?</p>
-              <img src={help} alt="help" />
+              <span className="relative cursor-pointer" onClick={() => setShowForHowLongTooltip(prevState => !prevState)}>
+                {showForHowLongTooltip ? <img src={helpActive} alt="help" /> :<img src={help} alt="help" />}
+                {showForHowLongTooltip ? <span className="tooltip-hook" /> : ''}
+              </span>
             </div>
+            {showForHowLongTooltip && (
+              <div className=" relative">
+                <div className="tooltip absolute z-20">
+                  The approximate lock up duration of your stake. During this time, your total stake including interest will be visible on the Pending page in the FutureCash MiniDapp. At the end of this period, it will be shown on the Ready page in FutureCash.
+                </div>
+                <div onClick={() => setShowForHowLongTooltip(false)} className="fixed w-full h-full z-10 left-0 top-0" />
+              </div>
+            )}
             <div className="cursor-pointer bg-grey-three w-full rounded-md w-full relative select-none">
               <div onClick={() => setShowSelect((prevState) => !prevState)}>
                 {!percent && <div className="bg-transparent w-full px-4 py-3 pr-20 outline-none">Select lock up duration</div>}
@@ -161,20 +184,20 @@ const Dashboard = () => {
               <p className="font-bold">{predictedMinima} Minima</p>
             </div>
             <p className="text-grey">
-              You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to
+              You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to
               collect at the end of your lock up period.
             </p>
             <div className="pb-56 lg:pb-0"></div>
-            <div className="fixed lg:relative w-full bg-white lg:bg-transparent p-6 lg:p-0 bottom-0 left-0 text-center">
+            <div className={`fixed lg:relative w-full bg-white lg:bg-transparent p-6 lg:p-0 bottom-0 left-0 text-center ${typingOnFocus ? 'relative' : ''}`}>
               <div className="flex flex-col gap-3">
                 <button
                   disabled={notEnoughFunds || overMaxAmount || price === '' || !percent}
                   onClick={() => setStep('summary')}
                   className="bg-dark-grey disabled:bg-dark-grey disabled:cursor-not-allowed py-4 text-white font-medium rounded-md mb-2"
                 >
-                  Maximise my MINIMA
+                  Maximize my MINIMA
                 </button>
-                <Link to="/help" className="mb-2">
+                <Link to="/help" className="cursor-pointer mb-2">
                   How does Maximize work?
                 </Link>
               </div>
@@ -207,8 +230,8 @@ const Dashboard = () => {
                 <div className="col-span-9 flex justify-end">{percent?.humanReadableRate}%</div>
                 <div className="col-span-3 font-bold">Receive</div>
                 <div className="col-span-9 flex justify-end">{predictedMinima} MINIMA</div>
-                {/*<div className="col-span-3 font-bold">Unlocked</div>*/}
-                {/*<div className="col-span-9 flex justify-end">11:47 UTC, 22 MAR 24</div>*/}
+                <div className="col-span-3 font-bold">Unlocked</div>
+                <div className="col-span-9 flex justify-end">{getEstimatedPayoutTime(percent)}</div>
               </div>
             </div>
             <div className="bg-red px-4 py-3 rounded-md fs-15">

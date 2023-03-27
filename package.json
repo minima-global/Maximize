@@ -1,9 +1,10 @@
 {
     "name": "maximize",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "private": true,
     "dependencies": {
         "@amelix/react-lottie": "^1.2.4",
+        "@date-fns/utc": "^1.0.0",
         "@stitches/react": "^1.2.8",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
