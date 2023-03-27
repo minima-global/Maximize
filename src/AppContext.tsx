@@ -20,10 +20,11 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     if (!loaded) {
       (window as any).MDS.init(async (msg: any) => {
-        console.log(msg);
 
         if(msg.event === "inited"){
-          await sql(`DROP TABLE cache IF EXISTS;`);
+          // hard reset
+          // await sql(`DROP TABLE cache IF EXISTS;`);
+
           await sql(`CREATE TABLE IF NOT EXISTS cache (name varchar(255), data longtext);`);
           const showOnboarding = await sql(`SELECT * FROM cache WHERE name = 'SHOW_ONBOARDING'`);
 
