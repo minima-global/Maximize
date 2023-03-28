@@ -3,16 +3,19 @@ import addSeconds from 'date-fns/addSeconds';
 import format from "date-fns/format";
 import { addMonths } from "date-fns";
 
-const getPayoutTime = (transaction: any) => {
+const getPayoutTime = (transaction: any, currentBlock: number) => {
   try {
     const payoutBlock = Number(transaction?.state[1]?.data);
+    const createdBlock = Number(transaction?.created);
+    const surpassedBlocks = currentBlock - createdBlock;
 
-    if (payoutBlock) {
+    if (payoutBlock && createdBlock) {
+      const blocks = payoutBlock - surpassedBlocks;
       const now = new UTCDate();
       const blockTimeInSeconds = 50;
-      const newTime = addSeconds(now, payoutBlock * blockTimeInSeconds);
+      const newTime = addSeconds(now, blocks * blockTimeInSeconds);
 
-      return format(newTime, "hh:mmaaa 'UTC', dd MMM yy");
+      return format(newTime, "do MMMM yyyy");
     }
   } catch {
     return null;
@@ -29,4 +32,8 @@ const getEstimatedPayoutTime = (percent: any) => {
   }
 }
 
-export { getPayoutTime, getEstimatedPayoutTime };
+const toFixedIfNecessary = (value: string, dp: number = 5) => {
+  return +parseFloat(value).toFixed( dp );
+}
+
+export { getPayoutTime, toFixedIfNecessary, getEstimatedPayoutTime };

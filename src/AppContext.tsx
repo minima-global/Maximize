@@ -42,16 +42,23 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             setCurrentBlock(Number(response));
           });
 
-          // get coins
+          // get all coins
           (window as any)
             .getCoins()
-            .then((response: any) => {
-              setTransactions(response);
-            })
             .catch((reason: any) => {
               if (reason === 'HEAVY_LOAD') {
                 setHeavyLoad(true);
               }
+            });
+
+          // get my coins
+          (window as any)
+            .getMyCoins()
+            .then((response: any) => {
+              setTransactions(response);
+            })
+            .catch(() => {
+              // do nothing
             });
 
           setLoaded(true);
@@ -67,16 +74,23 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             setBalance(Number(response));
           });
 
-          // get coins
+          // get all coins
           (window as any)
             .getCoins()
-            .then((response: any) => {
-              setTransactions(response);
-            })
             .catch((reason: any) => {
               if (reason === 'HEAVY_LOAD') {
                 setHeavyLoad(true);
               }
+            });
+
+          // get my coins
+          (window as any)
+            .getMyCoins()
+            .then((response: any) => {
+              setTransactions(response);
+            })
+            .catch(() => {
+              // do nothing
             });
         }
       });

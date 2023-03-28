@@ -205,3 +205,47 @@ pre {
     border-style: solid;
     border-color: transparent transparent white transparent;
 }
+
+.checkbox {
+    width: 17px;
+    height: 17px;
+    min-width: 17px;
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: #282B2E;
+}
+
+.checkbox:checked:after {
+    content: '';
+    width: 11px;
+    height: 14px;
+    left: 0;
+    color: black;
+    display: block;
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%0A%3Csvg width='22px' height='17px' viewBox='0 0 22 17' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline id='Path' stroke='white' stroke-width='4' points='2.38964844 9.09033203 7.93798828 14.4946289 19.6391602 2.5859375'%3E%3C/polyline%3E%3C/g%3E%3C/svg%3E");
+}
+
+.item-enter {
+    opacity: 0;
+}
+
+.item-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+
+.item-exit {
+    opacity: 1;
+}
+
+.item-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}

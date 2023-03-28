@@ -86,7 +86,7 @@ function cancelBond(coinid,amount){
       var txn = "txncreate  id:"+randid
         +";txninput  id:"+randid+" coinid:"+coinid
         +";txnoutput id:"+randid+" address:"+address+" amount:"+amount+" storestate:false"
-        +";txnsign   id:"+randid+" publickey:"+pubkey
+        +";txnsign   id:"+randid+" publickey:"+pubkey+" txnpostauto:1"
         +";txnpost   id:"+randid+" auto:true"
         +";txndelete id:"+randid;
 
@@ -107,11 +107,17 @@ function getCoins() {
         reject('HEAVY_LOAD');
       }
 
-      MDS.cmd("coins order:asc relevant:true address:"+BOND_ADDRESS,function(resp){
-        var coins = resp.response;
+      resolve(allcoins);
+    });
+  });
+}
 
-        resolve(coins);
-      });
+function getMyCoins() {
+  return new Promise((resolve, reject) => {
+    MDS.cmd("coins order:asc relevant:true address:"+BOND_ADDRESS,function(resp){
+      var coins = resp.response;
+
+      resolve(coins);
     });
   });
 }

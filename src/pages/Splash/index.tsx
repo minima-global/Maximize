@@ -76,14 +76,14 @@ const Splash = () => {
           </div>
         </div>
       )}
-      {step === 1 && (
-        <div onClick={() => setStep(2)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center text-white">
+      <div
+        onClick={() => step === 5 ? goToDashboard() : setStep(prevState => prevState + 1)}
+        className={`absolute cursor-pointer justify-center flex items-center h-full w-full text-center text-white`}
+      >
+        <div className={`absolute transition-opacity duration-200 ease-in-out ${step === 1 ? 'opacity-1' : 'opacity-0'}`}>
           <div className="text-primary text-2xl mb-16">Hello</div>
-          <div className="absolute bottom-20">Tap anywhere to continue</div>
         </div>
-      )}
-      {step === 2 && (
-        <div onClick={() => setStep(3)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center  text-white">
+        <div className={`absolute transition-opacity duration-200 ease-in-out ${step === 2 ? 'opacity-1' : 'opacity-0'}`}>
           <div className="text-primary text-2xl mb-16" style={{ lineHeight: '46px' }}>
             Lock up Native
             <span className="block lg:none" />
@@ -91,11 +91,8 @@ const Splash = () => {
             <span className="block lg:none" />
             self-custodial wallet
           </div>
-          <div className="absolute bottom-20">Tap anywhere to continue</div>
         </div>
-      )}
-      {step === 3 && (
-        <div onClick={() => setStep(4)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center text-white">
+        <div className={`absolute transition-opacity duration-200 ease-in-out ${step === 3 ? 'opacity-1' : 'opacity-0'}`}>
           <div className="text-primary text-2xl mb-16" style={{ lineHeight: '46px' }}>
             Earn up to 18%
             <span className="block lg:none" />
@@ -105,11 +102,8 @@ const Splash = () => {
             <span className="block lg:none" />
             fixed pool
           </div>
-          <div className="absolute bottom-20">Tap anywhere to continue</div>
         </div>
-      )}
-      {step === 4 && (
-        <div onClick={() => setStep(5)} className="cursor-pointer relative flex justify-center items-center h-full w-full text-center  text-white">
+        <div className={`absolute transition-opacity duration-200 ease-in-out ${step === 4 ? 'opacity-1' : 'opacity-0'}`}>
           <div className="text-primary text-2xl mb-16" style={{ lineHeight: '46px' }}>
             Choose your lock up
             <span className="block lg:none" />
@@ -119,15 +113,12 @@ const Splash = () => {
             <span className="block lg:none" />
             Future Cash.
           </div>
-          <div className="absolute bottom-20">Tap anywhere to continue</div>
         </div>
-      )}
-      {step === 5 && (
-        <div onClick={goToDashboard} className="cursor-pointer relative flex justify-center items-center h-full w-full text-white">
+        <div className={`absolute transition-opacity duration-200 ease-in-out ${step === 5 ? 'opacity-1' : 'opacity-0'}`}>
           <div className="text-primary text-2xl mb-16">Let’s go</div>
-          <div className="absolute bottom-20">Tap anywhere to continue</div>
         </div>
-      )}
+        <div className="absolute bottom-20">Tap anywhere to continue</div>
+      </div>
     </div>
   );
 };

@@ -4,13 +4,13 @@ import helpActive from '../../assets/help_active.svg';
 import XBlack from '../../assets/x_black.svg';
 import expandMore from '../../assets/expand_more.svg';
 import TitleBar from '../../components/TitleBar';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from "react";
 import { appContext } from '../../AppContext';
 import config from '../../config';
 import { block } from '../../__minima__';
 import { Link } from 'react-router-dom';
 import PendingTransactions from '../PendingTransactions';
-import { getEstimatedPayoutTime } from "../../utilities";
+import { getEstimatedPayoutTime, toFixedIfNecessary } from "../../utilities";
 
 const Dashboard = () => {
   const { balance, heavyLoad, showOnboarding } = useContext(appContext);
@@ -22,10 +22,26 @@ const Dashboard = () => {
   const [showPendingTransactions, setShowPendingTransactions] = React.useState(false);
   const [typingOnFocus, setTypingOnFocus] = React.useState(false);
   const [showForHowLongTooltip, setShowForHowLongTooltip] = React.useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [showHeavyLoad, setShowHeavyLoad] = useState(false);
+
+
+  // reset confirm status if the step changes
+  useEffect(() => {
+    setConfirm(false);
+  }, [step])
 
   const notEnoughFunds = React.useMemo(() => {
     return Number(price) > balance;
   }, [price, balance]);
+
+  const overMinAmount = React.useMemo(() => {
+    if (price === '') {
+      return false;
+    }
+
+    return Number(price) < Number(config.minPrice);
+  }, [price]);
 
   const overMaxAmount = React.useMemo(() => {
     return Number(price) > Number(config.maxPrice);
@@ -41,6 +57,7 @@ const Dashboard = () => {
 
   const setAmount = (months: number, humanReadableRate: number, rate: number) => {
     setShowSelect(false);
+    setConfirm(false);
     setPercent({
       rate,
       months,
@@ -76,14 +93,14 @@ const Dashboard = () => {
 
   return (
     <div className={`h-full ${step === 'form' ? 'bg-grey' : ''}`}>
-      {heavyLoad && (
+      {showHeavyLoad && (
         <div className="fixed z-10 top-0 left-0 w-full h-screen">
           <div className="relative z-20 flex items-center h-full">
             <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
               <h1 className="text-xl mb-2">We are currently experiencing a high demand for staking. Please try again later.</h1>
-              {/*<div className="flex flex-col gap-3">*/}
-              {/*  <button className="bg-dark-grey py-4 text-white font-medium rounded-md">Continue</button>*/}
-              {/*</div>*/}
+              <div className="flex flex-col gap-3">
+                <button onClick={() => setShowHeavyLoad(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">Continue</button>
+              </div>
             </div>
           </div>
           <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
@@ -92,6 +109,7 @@ const Dashboard = () => {
       <TitleBar home showPendingTransaction={() => setShowPendingTransactions(true)} />
       {step === 'form' && (
         <div className="max-w-lg mx-auto lg:pt-10">
+          <div className="bg-grey left-0 fixed w-screen h-screen -z-10" />
           <div className="flex flex-col gap-5 p-5">
             <h1 className="text-2xl font-bold">Maximize your Minima</h1>
             <p>Complete the fields below to lock your Native Minima (MINIMA)</p>
@@ -111,6 +129,7 @@ const Dashboard = () => {
               </div>
             </div>
             {notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">You do not have the funds</div>}
+            {overMinAmount && !notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">Please enter a value over the min amount</div>}
             {overMaxAmount && !notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">Please enter a value under the max amount</div>}
             <div className="flex items-center gap-2">
               <p>For how long?</p>
@@ -181,18 +200,24 @@ const Dashboard = () => {
             </div>
             <div className={`bg-main w-full rounded-md w-full relative py-3 px-4 ${predictedMinima === '-' ? 'opacity-50' : ''}`}>
               <p className="mb-1">You will receive</p>
-              <p className="font-bold">{predictedMinima} Minima</p>
+              <p className="font-bold">{toFixedIfNecessary(predictedMinima)} Minima</p>
             </div>
             <p className="text-grey">
               You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to
               collect at the end of your lock up period.
             </p>
-            <div className="pb-56 lg:pb-0"></div>
+            <div className="pb-40 lg:pb-0"></div>
             <div className={`fixed lg:relative w-full bg-white lg:bg-transparent p-6 lg:p-0 bottom-0 left-0 text-center ${typingOnFocus ? 'relative' : ''}`}>
               <div className="flex flex-col gap-3">
                 <button
-                  disabled={notEnoughFunds || overMaxAmount || price === '' || !percent}
-                  onClick={() => setStep('summary')}
+                  disabled={notEnoughFunds || overMinAmount || overMaxAmount || price === '' || !percent}
+                  onClick={() => {
+                    if (heavyLoad) {
+                      return setShowHeavyLoad(true);
+                    }
+
+                    setStep("summary");
+                  }}
                   className="bg-dark-grey disabled:bg-dark-grey disabled:cursor-not-allowed py-4 text-white font-medium rounded-md mb-2"
                 >
                   Maximize my MINIMA
@@ -229,13 +254,16 @@ const Dashboard = () => {
                 <div className="col-span-3 font-bold">Yield</div>
                 <div className="col-span-9 flex justify-end">{percent?.humanReadableRate}%</div>
                 <div className="col-span-3 font-bold">Receive</div>
-                <div className="col-span-9 flex justify-end">{predictedMinima} MINIMA</div>
+                <div className="col-span-9 flex justify-end">{toFixedIfNecessary(predictedMinima)} MINIMA</div>
                 <div className="col-span-3 font-bold">Unlocked</div>
                 <div className="col-span-9 flex justify-end">{getEstimatedPayoutTime(percent)}</div>
               </div>
             </div>
-            <div className="bg-red px-4 py-3 rounded-md fs-15">
-              Once you confirm, you will NOT be able to unlock your staked MINIMA until the Unlocked time and date specified above.{' '}
+            <div className="bg-grey px-4 py-3 rounded-md text-sm">
+              <label className="flex items-center cursor-pointer">
+                <input type="checkbox" className="checkbox" readOnly={true} checked={confirm} onClick={() => setConfirm(prevState => !prevState)} />
+                <span className="ml-4">I understand that once my stake is processed, my Minima will be locked until the date and time shown above.</span>
+              </label>
             </div>
           </div>
           <div>
@@ -266,7 +294,7 @@ const Dashboard = () => {
                   </button>
                 )}
                 {!isLoading && (
-                  <button onClick={createBond} className="bg-dark-grey py-4 text-white font-medium rounded-md mb-2">
+                  <button onClick={createBond} disabled={!confirm} className="bg-dark-grey py-4 text-white font-medium rounded-md mb-2">
                     Confirm
                   </button>
                 )}
@@ -279,10 +307,10 @@ const Dashboard = () => {
         </div>
       )}
       {step === 'confirm' && (
-        <div className="absolute top-0 left-0 h-full w-full bg-main p-8">
+        <div className="absolute z-50 top-0 left-0 h-full w-full bg-main p-8">
           <div className="w-full h-full flex flex-col">
             <div className="w-full flex justify-end mb-5">
-              <img onClick={() => setStep('summary')} className="cursor-pointer" src={XBlack} alt="close" />
+              <img onClick={() => setStep('form')} className="cursor-pointer" src={XBlack} alt="close" />
             </div>
             <div className="flex justify-center items-center flex-grow text-center">
               <div className="mb-5">
