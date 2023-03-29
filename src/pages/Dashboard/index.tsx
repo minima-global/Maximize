@@ -271,7 +271,7 @@ const Dashboard = () => {
             <div className="bg-grey px-4 py-3 rounded-md text-sm">
               <label className="flex items-center cursor-pointer">
                 <input type="checkbox" className="checkbox" readOnly={true} checked={confirm} onClick={() => setConfirm((prevState) => !prevState)} />
-                <span className="ml-4">I understand that once my stake is processed, my staked Minima will be locked until the date shown above.</span>
+                <span className="ml-4">I understand that once my stake is processed, my staked Minima and the additional Minima yield I earn will be locked until the date shown above.</span>
               </label>
             </div>
           </div>
