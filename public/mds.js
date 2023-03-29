@@ -371,6 +371,22 @@ var MDS = {
                 bytes[i] = binary_string.charCodeAt(i);
             }
             return bytes.buffer;
+        },
+
+        //Return a state variable given the coin
+        getStateVariable(coin,port){
+
+            //Get the state vars
+            var statvars = coin.state;
+            var len = statvars.length;
+            for (var i = 0; i < len; i++) {
+                var state = statvars[i];
+                if(state.port == port){
+                    return state.data;
+                }
+            }
+
+            return undefined;
         }
     }
 };
@@ -395,7 +411,6 @@ function PollListener(){
     var polldata = "series="+PollSeries+"&counter="+PollCounter;
 
     httpPostAsyncPoll(pollhost,polldata,function(msg){
-        //MDS.log(JSON.stringify(msg));
 
         //Are we on the right Series..
         if(PollSeries != msg.series){

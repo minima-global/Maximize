@@ -2,24 +2,32 @@ import * as React from 'react';
 import { useContext, useState } from "react";
 import { appContext } from '../../AppContext';
 import TitleBar from '../../components/TitleBar';
-import { lib } from "../../lib";
-import { getPayoutTime } from "../../utilities";
+import { cleanPercentages, lib } from "../../lib";
+import { getPayoutTime, toFixedIfNecessary } from "../../utilities";
 import XBlack from "../../assets/x_black.svg";
 
 const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
   const { currentBlock, transactions } = useContext(appContext);
   const [showConfirm, setShowConfirm] = useState(false);
   const [cancelBondId, setCancelBondId] = useState(null);
+  const [showWriteConfirm, setShowWriteConfirm] = useState(false);
   const [cancelBondAmount, setCancelBondAmount] = useState(null);
+  const [cancelBondPublicKey, setCancelBondPublicKey] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const cancelBond = async () => {
     try {
       setIsLoading(true);
-      await (window as any).cancelBond(cancelBondId, cancelBondAmount);
+      const response = await (window as any).cancelBond(cancelBondId, cancelBondAmount, cancelBondPublicKey);
       setCancelBondId(null);
       setCancelBondAmount(null);
-      setShowConfirm(true);
+      setCancelBondPublicKey(null);
+
+      if (response === 2) {
+        return setShowConfirm(true);
+      }
+
+      setShowWriteConfirm(true);
     } catch {
       alert('An error occurred whilst cancelling the bond, please try again later...');
     } finally {
@@ -29,15 +37,31 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
 
   return (
     <div className="min-h-screen bg-white lg:pb-20">
+      <TitleBar back={close} />
+      {showWriteConfirm && (
+        <div className="fixed z-10 top-0 left-0 w-full h-screen">
+          <div className="relative z-20 flex items-center h-full">
+            <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
+              <h1 className="text-xl mb-3">Your cancel request will be processed in the next block.</h1>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => setShowWriteConfirm(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
+        </div>
+      )}
       {showConfirm && (
-        <div className="absolute z-50 top-0 left-0 h-full w-full bg-main p-8">
+        <div className="fixed z-50 top-0 left-0 h-full w-full bg-main p-8">
           <div className="w-full h-full flex flex-col">
             <div className="w-full flex justify-end mb-5">
               <img onClick={() => setShowConfirm(false)} className="cursor-pointer" src={XBlack} alt="close" />
             </div>
             <div className="flex justify-center items-center flex-grow text-center">
               <div className="mb-5">
-                <h1 className="text-3xl font-bold mb-5">Confirm</h1>
+                <h1 className="text-3xl font-bold mb-5">Action Required</h1>
                 <p className="max-w-md mx-auto px-2 mb-5 lg:mb-0">
                   To accept the transaction, go to the Minima app Home screen and press{' '}
                   <svg className="inline lg:ml-1 mr-1 lg:mr-2 mb-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,16 +72,19 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
                   </svg>
                   Long press the command and select 'Accept'. That's it!
                 </p>
+                <p>
+                  Once accepted, your cancellation will be processed in the next block.
+                </p>
                 <div className="hidden lg:block mt-8 mb-10 max-w-sm mx-auto">
                   <button onClick={() => setShowConfirm(false)} className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3">
-                    Confirm
+                    OK
                   </button>
                 </div>
               </div>
             </div>
             <div className="block lg:hidden w-full">
               <button onClick={() => setShowConfirm(false)} className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3">
-                Confirm
+                OK
               </button>
             </div>
           </div>
@@ -107,9 +134,12 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
           <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
         </div>
       )}
-      <TitleBar back={close} />
       <div className="max-w-xl mx-auto lg:mt-14 flex flex-col gap-5 p-5">
-        <h1 className="text-2xl font-bold mb-2">Your pending stakes</h1>
+        <h1 className="text-2xl font-bold -mb-1">Your unconfirmed stakes</h1>
+        <p className="text-grey mb-3">
+          You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to
+          collect at the end of your lock up period.
+        </p>
         {transactions && transactions.length === 0 && <div className="bg-grey py-2 px-4 rounded-md text-center">No stakes pending</div>}
         {transactions && transactions.length > 0 && (
           <>
@@ -124,9 +154,9 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
                     <div className="col-span-3 font-bold">Timeframe</div>
                     <div className="col-span-9 flex justify-end">{lib[transaction.state[4].data]}</div>
                     <div className="col-span-3 font-bold">Yield</div>
-                    <div className="col-span-9 flex justify-end">{transaction.state[4].data}%</div>
+                    <div className="col-span-9 flex justify-end">{cleanPercentages[transaction.state[4].data]}%</div>
                     <div className="col-span-3 font-bold">Receive</div>
-                    <div className="col-span-9 flex justify-end">{Number(transaction.amount) * Number(transaction.state[4].data)} MINIMA</div>
+                    <div className="col-span-9 flex justify-end">{toFixedIfNecessary(String(Number(transaction.amount) * Number(transaction.state[4].data)))} MINIMA</div>
                     <div className="col-span-3 font-bold">Unlocked</div>
                     <div className="col-span-9 flex justify-end">{payoutTime}</div>
                     <div className="col-span-6 font-bold">Block position</div>
@@ -134,7 +164,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
                       {currentBlock && <span className="bg-main rounded px-1.5">{currentBlock - Number(transaction.created)}/10</span>}
                     </div>
                   </div>
-                  {/*{currentBlock - Number(transaction.created) >= 10 && (*/}
+                  {/*{(*/}
                   {/*  <div className="mt-5 bg-green px-4 py-3 rounded-md fs-15 text-center">Go to FutureCash to view your stake</div>*/}
                   {/*)}*/}
                   <div
@@ -142,9 +172,10 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
                     onClick={() => {
                       setCancelBondId(transaction.coinid);
                       setCancelBondAmount(transaction.amount);
+                      setCancelBondPublicKey((window as any).MDS.util.getStateVariable(transaction,"100"));
                     }}
                   >
-                    <button className="border-grey w-full py-2 px-3 rounded text-grey-two">Cancel stake</button>
+                    <button className="bg-black w-full py-2 px-3 rounded text-white">Cancel stake</button>
                   </div>
                 </div>
               )

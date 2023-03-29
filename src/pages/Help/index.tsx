@@ -12,6 +12,7 @@ const Help = () => {
 
   return (
     <div>
+      <TitleBar />
       {displaySmartContract && (
         <div className="absolute top-0 left-0 h-full w-full bg-black text-white text-sm p-8 z-50">
           <div className="h-full flex flex-col">
@@ -63,14 +64,12 @@ RETURN VERIFYOUT(@INPUT fcaddress fullvalue @TOKENID TRUE)`}
           </div>
         </div>
       )}
-      <TitleBar />
       <div className="max-w-xl mx-auto lg:mt-14 flex flex-col gap-5 p-5">
         <h1 className="text-2xl font-bold mb-2">How does Maximize work?</h1>
-        <p>Maximize is a completely non-custodial yield mechanism.</p>
-        <p>You lock up Native Minima (MINIMA) for a period of time and in return get more Minima sent back to you after a set period of time via FutureCash.</p>
-        <p>At no stage do you 'send' the funds to anyone who can take them.</p>
-        <p>You send funds to a contract that will only allow the funds to be sent back to you with the correct Rate and Duration.</p>
-        <p>Before your request is confirmed, you can cancel the stake to send your Minima back to yourself if you wish.</p>
+        <p>Maximize is a completely non-custodial yield product.</p>
+        <p>You stake Native Minima (MINIMA) for a set period of time and in return get more MINIMA sent back to you via FutureCash.</p>
+        <p>At no stage do you 'send' your coins to anyone who can take them. Instead, you send coins to a contract that will only allow your stake to be sent back to you with the correct Yield and Timeframe.</p>
+        <p>Before your stake is confirmed, you can cancel it if you wish.</p>
         <p onClick={toggleDisplaySmartContract} className="cursor-pointer">
           <span className="border-b border-black pb-1">View the contract</span>
         </p>

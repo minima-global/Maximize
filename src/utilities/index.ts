@@ -26,13 +26,13 @@ const getEstimatedPayoutTime = (percent: any) => {
   try {
     const now = new UTCDate();
     const payoutTime = addMonths(now, percent.months);
-    return format(payoutTime, "hh:mmaaa 'UTC', dd MMM yy");
+    return format(payoutTime, "do MMMM yyyy");
   } catch {
     return '-';
   }
 }
 
-const toFixedIfNecessary = (value: string, dp: number = 5) => {
+const toFixedIfNecessary = (value: string, dp: number = 9) => {
   return +parseFloat(value).toFixed( dp );
 }
 

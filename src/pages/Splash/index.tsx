@@ -111,7 +111,7 @@ const Splash = () => {
             <span className="block lg:none" />
             your payment from
             <span className="block lg:none" />
-            Future Cash.
+            Future Cash
           </div>
         </div>
         <div className={`absolute transition-opacity duration-200 ease-in-out ${step === 5 ? 'opacity-1' : 'opacity-0'}`}>

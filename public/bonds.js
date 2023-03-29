@@ -6,7 +6,7 @@ var BOND_ADDRESS = "MxG0861MPQ3ZQTM4GFTZ0UJA74Y48A4GDPYM1NTVKDTU0B34BFDV86G5A0PD
 
 var MAX_BOND 	= 0.001;
 var MIN_BOND 	= 0.000001;
-var HEAVY_LOAD 	= 5;
+var HEAVY_LOAD 	= 50;
 
 function requestBond(currentblock, amount, bondtype){
   return new Promise((resolve, reject) => {
@@ -71,13 +71,12 @@ function requestBond(currentblock, amount, bondtype){
   })
 }
 
-function cancelBond(coinid,amount){
+function cancelBond(coinid,amount,pubkey){
   return new Promise((resolve) => {
     MDS.cmd("getaddress",function(resp){
 
       //Get an address
       var address = resp.response.miniaddress;
-      var pubkey  	= resp.response.publickey;
 
       //Random ID
       var randid = Math.floor(Math.random() * 1000000000)+"";
@@ -86,12 +85,15 @@ function cancelBond(coinid,amount){
       var txn = "txncreate  id:"+randid
         +";txninput  id:"+randid+" coinid:"+coinid
         +";txnoutput id:"+randid+" address:"+address+" amount:"+amount+" storestate:false"
-        +";txnsign   id:"+randid+" publickey:"+pubkey+" txnpostauto:1"
-        +";txnpost   id:"+randid+" auto:true"
-        +";txndelete id:"+randid;
+        +";txnsign   id:"+randid+" publickey:"+pubkey + ' txnpostauto:true txndelete:true';
 
       MDS.cmd(txn,function(resp){
-        resolve();
+        console.log(JSON.stringify(resp));
+        const lastItem = resp[resp.length - 1];
+        if (lastItem.pending) {
+          return resolve(2);
+        }
+        resolve(1);
       });
     });
   })

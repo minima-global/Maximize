@@ -4,13 +4,13 @@ import helpActive from '../../assets/help_active.svg';
 import XBlack from '../../assets/x_black.svg';
 import expandMore from '../../assets/expand_more.svg';
 import TitleBar from '../../components/TitleBar';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from 'react';
 import { appContext } from '../../AppContext';
 import config from '../../config';
 import { block } from '../../__minima__';
 import { Link } from 'react-router-dom';
 import PendingTransactions from '../PendingTransactions';
-import { getEstimatedPayoutTime, toFixedIfNecessary } from "../../utilities";
+import { getEstimatedPayoutTime, toFixedIfNecessary } from '../../utilities';
 
 const Dashboard = () => {
   const { balance, heavyLoad, showOnboarding } = useContext(appContext);
@@ -25,11 +25,11 @@ const Dashboard = () => {
   const [confirm, setConfirm] = useState(false);
   const [showHeavyLoad, setShowHeavyLoad] = useState(false);
 
-
   // reset confirm status if the step changes
   useEffect(() => {
+    window.scrollTo(0, 0);
     setConfirm(false);
-  }, [step])
+  }, [step]);
 
   const notEnoughFunds = React.useMemo(() => {
     return Number(price) > balance;
@@ -47,12 +47,16 @@ const Dashboard = () => {
     return Number(price) > Number(config.maxPrice);
   }, [price]);
 
+  const isValidAmount = React.useMemo(() => {
+    return !parseFloat(price);
+  }, [price]);
+
   const predictedMinima = React.useMemo(() => {
     if (!percent || price === '') {
       return '-';
     }
 
-    return (Number(price) * percent.rate).toFixed(6);
+    return toFixedIfNecessary(String(Number(price) * percent.rate));
   }, [price, percent]);
 
   const setAmount = (months: number, humanReadableRate: number, rate: number) => {
@@ -74,8 +78,11 @@ const Dashboard = () => {
       setPercent(null);
 
       if (response === 2) {
-        setStep('confirm');
+        return setStep('confirm');
       }
+
+      setStep('form');
+      setShowPendingTransactions(true);
     } catch (e) {
       alert('An unknown error occurred');
     } finally {
@@ -93,30 +100,31 @@ const Dashboard = () => {
 
   return (
     <div className={`h-full ${step === 'form' ? 'bg-grey' : ''}`}>
+      <TitleBar home showPendingTransaction={() => setShowPendingTransactions(true)} />
       {showHeavyLoad && (
         <div className="fixed z-10 top-0 left-0 w-full h-screen">
           <div className="relative z-20 flex items-center h-full">
             <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
               <h1 className="text-xl mb-2">We are currently experiencing a high demand for staking. Please try again later.</h1>
               <div className="flex flex-col gap-3">
-                <button onClick={() => setShowHeavyLoad(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">Continue</button>
+                <button onClick={() => setShowHeavyLoad(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
+                  Continue
+                </button>
               </div>
             </div>
           </div>
           <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
         </div>
       )}
-      <TitleBar home showPendingTransaction={() => setShowPendingTransactions(true)} />
       {step === 'form' && (
-        <div className="max-w-lg mx-auto lg:pt-10">
+        <div className="max-w-lg mx-auto lg:pt-10 lg:pb-10">
           <div className="bg-grey left-0 fixed w-screen h-screen -z-10" />
           <div className="flex flex-col gap-5 p-5">
-            <h1 className="text-2xl font-bold">Maximize your Minima</h1>
-            <p>Complete the fields below to lock your Native Minima (MINIMA)</p>
-            <p>How much would you like to lock?</p>
+            <p className="font-bold">Complete the fields below to stake your Native Minima (MINIMA)</p>
+            <p>How much would you like to stake?</p>
             <div className="bg-grey-three w-full rounded-md w-full relative">
               <input
-                type="text"
+                type="number"
                 value={price}
                 onFocus={() => setTypingOnFocus(true)}
                 onBlur={() => setTypingOnFocus(false)}
@@ -129,26 +137,27 @@ const Dashboard = () => {
               </div>
             </div>
             {notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">You do not have the funds</div>}
-            {overMinAmount && !notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">Please enter a value over the min amount</div>}
+            {overMinAmount && !notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">Please enter a value over the minimum amount</div>}
             {overMaxAmount && !notEnoughFunds && <div className="bg-red px-4 py-3 rounded-md fs-15">Please enter a value under the max amount</div>}
             <div className="flex items-center gap-2">
               <p>For how long?</p>
-              <span className="relative cursor-pointer" onClick={() => setShowForHowLongTooltip(prevState => !prevState)}>
-                {showForHowLongTooltip ? <img src={helpActive} alt="help" /> :<img src={help} alt="help" />}
+              <span className="relative cursor-pointer" onClick={() => setShowForHowLongTooltip((prevState) => !prevState)}>
+                {showForHowLongTooltip ? <img src={helpActive} alt="help" /> : <img src={help} alt="help" />}
                 {showForHowLongTooltip ? <span className="tooltip-hook" /> : ''}
               </span>
             </div>
             {showForHowLongTooltip && (
               <div className=" relative">
                 <div className="tooltip absolute z-20">
-                  The approximate lock up duration of your stake. During this time, your total stake including interest will be visible on the Pending page in the FutureCash MiniDapp. At the end of this period, it will be shown on the Ready page in FutureCash.
+                  The approximate lock up duration of your stake. During this time, your total stake including yield will be visible on the Pending page in the FutureCash
+                  MiniDapp. At the end of this period, it will be shown on the Ready page in FutureCash.
                 </div>
                 <div onClick={() => setShowForHowLongTooltip(false)} className="fixed w-full h-full z-10 left-0 top-0" />
               </div>
             )}
             <div className="cursor-pointer bg-grey-three w-full rounded-md w-full relative select-none">
               <div onClick={() => setShowSelect((prevState) => !prevState)}>
-                {!percent && <div className="bg-transparent w-full px-4 py-3 pr-20 outline-none">Select lock up duration</div>}
+                {!percent && <div className="bg-transparent w-full px-4 py-3 pr-20 outline-none">Select stake timeframe</div>}
                 {percent && (
                   <div className="bg-transparent w-full px-4 py-3 pr-20 outline-none">
                     {(percent.months < 12 || percent.months > 12) && (
@@ -200,23 +209,23 @@ const Dashboard = () => {
             </div>
             <div className={`bg-main w-full rounded-md w-full relative py-3 px-4 ${predictedMinima === '-' ? 'opacity-50' : ''}`}>
               <p className="mb-1">You will receive</p>
-              <p className="font-bold">{toFixedIfNecessary(predictedMinima)} Minima</p>
+              <p className="font-bold">{predictedMinima} Minima</p>
             </div>
-            <p className="text-grey">
-              You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to
-              collect at the end of your lock up period.
-            </p>
-            <div className="pb-40 lg:pb-0"></div>
-            <div className={`fixed lg:relative w-full bg-white lg:bg-transparent p-6 lg:p-0 bottom-0 left-0 text-center ${typingOnFocus ? 'relative' : ''}`}>
+            {/*<p className="text-grey">*/}
+            {/*  You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to*/}
+            {/*  collect at the end of your lock up period.*/}
+            {/*</p>*/}
+            <div className={`${!typingOnFocus ? 'pb-40 lg:pb-0' : ''}`}></div>
+            <div className={`fixed lg:relative w-full bottom-0 left-0 text-center ${typingOnFocus ? 'relative -mt-4 lg:mt-0' : ' bg-white lg:bg-transparent p-6 lg:p-0'}`}>
               <div className="flex flex-col gap-3">
                 <button
-                  disabled={notEnoughFunds || overMinAmount || overMaxAmount || price === '' || !percent}
+                  disabled={notEnoughFunds || overMinAmount || isValidAmount || overMaxAmount || price === '' || !percent}
                   onClick={() => {
                     if (heavyLoad) {
                       return setShowHeavyLoad(true);
                     }
 
-                    setStep("summary");
+                    setStep('summary');
                   }}
                   className="bg-dark-grey disabled:bg-dark-grey disabled:cursor-not-allowed py-4 text-white font-medium rounded-md mb-2"
                 >
@@ -254,15 +263,15 @@ const Dashboard = () => {
                 <div className="col-span-3 font-bold">Yield</div>
                 <div className="col-span-9 flex justify-end">{percent?.humanReadableRate}%</div>
                 <div className="col-span-3 font-bold">Receive</div>
-                <div className="col-span-9 flex justify-end">{toFixedIfNecessary(predictedMinima)} MINIMA</div>
+                <div className="col-span-9 flex justify-end">{predictedMinima} MINIMA</div>
                 <div className="col-span-3 font-bold">Unlocked</div>
                 <div className="col-span-9 flex justify-end">{getEstimatedPayoutTime(percent)}</div>
               </div>
             </div>
             <div className="bg-grey px-4 py-3 rounded-md text-sm">
               <label className="flex items-center cursor-pointer">
-                <input type="checkbox" className="checkbox" readOnly={true} checked={confirm} onClick={() => setConfirm(prevState => !prevState)} />
-                <span className="ml-4">I understand that once my stake is processed, my Minima will be locked until the date and time shown above.</span>
+                <input type="checkbox" className="checkbox" readOnly={true} checked={confirm} onClick={() => setConfirm((prevState) => !prevState)} />
+                <span className="ml-4">I understand that once my stake is processed, my staked Minima will be locked until the date shown above.</span>
               </label>
             </div>
           </div>
@@ -314,7 +323,7 @@ const Dashboard = () => {
             </div>
             <div className="flex justify-center items-center flex-grow text-center">
               <div className="mb-5">
-                <h1 className="text-3xl font-bold mb-5">Confirm</h1>
+                <h1 className="text-3xl font-bold mb-5">Action Required</h1>
                 <p className="max-w-md mx-auto px-2 mb-5 lg:mb-0">
                   To accept the transaction, go to the Minima app Home screen and press{' '}
                   <svg className="inline lg:ml-1 mr-1 lg:mr-2 mb-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -326,15 +335,27 @@ const Dashboard = () => {
                   Long press the command and select 'Accept'. That's it!
                 </p>
                 <div className="hidden lg:block mt-8 mb-10 max-w-sm mx-auto">
-                  <button onClick={() => setStep('form')} className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3">
-                    Confirm
+                  <button
+                    onClick={() => {
+                      setStep('form');
+                      setShowPendingTransactions(true);
+                    }}
+                    className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3"
+                  >
+                    OK
                   </button>
                 </div>
               </div>
             </div>
             <div className="block lg:hidden w-full">
-              <button onClick={() => setStep('form')} className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3">
-                Confirm
+              <button
+                onClick={() => {
+                  setStep('form');
+                  setShowPendingTransactions(true);
+                }}
+                className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3"
+              >
+                OK
               </button>
             </div>
           </div>
