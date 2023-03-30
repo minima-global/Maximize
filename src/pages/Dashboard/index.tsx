@@ -11,9 +11,12 @@ import { block } from '../../__minima__';
 import { Link } from 'react-router-dom';
 import PendingTransactions from '../PendingTransactions';
 import { getEstimatedPayoutTime, toFixedIfNecessary } from '../../utilities';
+import { lockedProviderContext } from "../../LockedProviderContext";
 
 const Dashboard = () => {
+  const { checkIsLocked } = useContext(lockedProviderContext);
   const { balance, heavyLoad, showOnboarding } = useContext(appContext);
+
   const [price, setPrice] = React.useState('');
   const [step, setStep] = React.useState('form');
   const [isLoading, setIsLoading] = React.useState(false);
@@ -71,18 +74,21 @@ const Dashboard = () => {
 
   const createBond = async () => {
     try {
-      setIsLoading(true);
-      const currentBlock = await block();
-      const response = await (window as any).requestBond(currentBlock, price, percent?.rate);
-      setPrice('');
-      setPercent(null);
+      await checkIsLocked(async (password) => {
+        setIsLoading(true);
+        const currentBlock = await block();
+        const response = await (window as any).requestBond(currentBlock, price, percent?.rate, password);
+        setPrice('');
+        setPercent(null);
 
-      if (response === 2) {
-        return setStep('confirm');
-      }
+        if (response === 2) {
+          return setStep('confirm');
+        }
 
-      setStep('form');
-      setShowPendingTransactions(true);
+        setStep('form');
+        setShowPendingTransactions(true);
+        setIsLoading(false);
+      });
     } catch (e) {
       alert('An unknown error occurred');
     } finally {
@@ -324,7 +330,7 @@ const Dashboard = () => {
             <div className="flex justify-center items-center flex-grow text-center">
               <div className="mb-5">
                 <h1 className="text-3xl font-bold mb-5">Action Required</h1>
-                <p className="max-w-md mx-auto px-2 mb-5 lg:mb-0">
+                <p className="block lg:hidden max-w-md mx-auto px-2 mb-5 lg:mb-0">
                   To accept the transaction, go to the Minima app Home screen and press{' '}
                   <svg className="inline lg:ml-1 mr-1 lg:mr-2 mb-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -333,6 +339,12 @@ const Dashboard = () => {
                     />
                   </svg>
                   Long press the command and select 'Accept'. That's it!
+                </p>
+                <p className="hidden lg:block max-w-md mx-auto px-2 mb-5 lg:mb-0">
+                  To accept the transaction, go to the MiniDapp hub and click Pending Actions. Click Accept for the Maximize command, then click OK. That's it!
+                </p>
+                <p className="lg:mt-4">
+                  Once accepted, please wait for your stake to appear, it will only show after the next block
                 </p>
                 <div className="hidden lg:block mt-8 mb-10 max-w-sm mx-auto">
                   <button

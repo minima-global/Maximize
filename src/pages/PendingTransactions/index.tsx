@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { useContext, useState } from "react";
+import { useContext, useState } from 'react';
 import { appContext } from '../../AppContext';
 import TitleBar from '../../components/TitleBar';
-import { cleanPercentages, lib } from "../../lib";
-import { getPayoutTime, toFixedIfNecessary } from "../../utilities";
-import XBlack from "../../assets/x_black.svg";
+import { cleanPercentages, lib } from '../../lib';
+import { getPayoutTimeSimplified, toFixedIfNecessary } from '../../utilities';
+import XBlack from '../../assets/x_black.svg';
+import { lockedProviderContext } from '../../LockedProviderContext';
 
 const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
   const { currentBlock, transactions } = useContext(appContext);
+  const { checkIsLocked, password } = useContext(lockedProviderContext);
+
   const [showConfirm, setShowConfirm] = useState(false);
   const [cancelBondId, setCancelBondId] = useState(null);
   const [showWriteConfirm, setShowWriteConfirm] = useState(false);
@@ -18,7 +21,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
   const cancelBond = async () => {
     try {
       setIsLoading(true);
-      const response = await (window as any).cancelBond(cancelBondId, cancelBondAmount, cancelBondPublicKey);
+      const response = await (window as any).cancelBond(cancelBondId, cancelBondAmount, cancelBondPublicKey, password);
       setCancelBondId(null);
       setCancelBondAmount(null);
       setCancelBondPublicKey(null);
@@ -62,7 +65,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
             <div className="flex justify-center items-center flex-grow text-center">
               <div className="mb-5">
                 <h1 className="text-3xl font-bold mb-5">Action Required</h1>
-                <p className="max-w-md mx-auto px-2 mb-5 lg:mb-0">
+                <p className="block lg:hidden max-w-md mx-auto px-2 mb-5 lg:mb-0">
                   To accept the transaction, go to the Minima app Home screen and press{' '}
                   <svg className="inline lg:ml-1 mr-1 lg:mr-2 mb-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -72,9 +75,10 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
                   </svg>
                   Long press the command and select 'Accept'. That's it!
                 </p>
-                <p>
-                  Once accepted, your cancellation will be processed in the next block.
+                <p className="hidden lg:block max-w-md mx-auto px-2 mb-5 lg:mb-0">
+                  To accept the transaction, go to the MiniDapp hub and click Pending Actions. Click Accept for the Maximize command, then click OK. That's it!
                 </p>
+                <p className="lg:mt-4">Once accepted, your cancellation will be processed in the next block.</p>
                 <div className="hidden lg:block mt-8 mb-10 max-w-sm mx-auto">
                   <button onClick={() => setShowConfirm(false)} className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3">
                     OK
@@ -137,14 +141,22 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
       <div className="max-w-xl mx-auto lg:mt-14 flex flex-col gap-5 p-5">
         <h1 className="text-2xl font-bold -mb-1">Your unconfirmed stakes</h1>
         <p className="text-grey mb-3">
-          You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to
-          collect at the end of your lock up period.
+          You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to collect
+          at the end of your lock up period.
         </p>
-        {transactions && transactions.length === 0 && <div className="bg-grey py-2 px-4 rounded-md text-center">No stakes pending</div>}
+        {transactions && transactions.length === 0 && (
+          <div>
+            <div className="bg-grey py-2 px-4 rounded-md text-left">
+              <ul>
+                <li>No unconfirmed stakes yet.</li>
+              </ul>
+            </div>
+          </div>
+        )}
         {transactions && transactions.length > 0 && (
           <>
             {transactions.map((transaction: any) => {
-              const payoutTime = getPayoutTime(transaction, currentBlock);
+              const payoutTime = getPayoutTimeSimplified(transaction);
 
               return (
                 <div key={transaction.coinid} className="bg-grey py-3 px-4 rounded-md">
@@ -170,18 +182,21 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
                   <div
                     className="pt-3"
                     onClick={() => {
-                      setCancelBondId(transaction.coinid);
-                      setCancelBondAmount(transaction.amount);
-                      setCancelBondPublicKey((window as any).MDS.util.getStateVariable(transaction,"100"));
+                      checkIsLocked(async () => {
+                        setCancelBondId(transaction.coinid);
+                        setCancelBondAmount(transaction.amount);
+                        setCancelBondPublicKey((window as any).MDS.util.getStateVariable(transaction, '100'));
+                      });
                     }}
                   >
                     <button className="bg-black w-full py-2 px-3 rounded text-white">Cancel stake</button>
                   </div>
                 </div>
-              )
+              );
             })}
           </>
         )}
+        <p className="text-grey mt-1 mb-3">Unconfirmed stakes will only appear after 1 block.</p>
       </div>
     </div>
   );

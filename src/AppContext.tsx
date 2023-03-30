@@ -21,8 +21,6 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     if (!loaded) {
       (window as any).MDS.init(async (msg: any) => {
 
-        console.log(msg);
-
         if(msg.event === "inited"){
           // hard reset
           // await sql(`DROP TABLE cache IF EXISTS;`);

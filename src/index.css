@@ -165,6 +165,11 @@ pre {
     border-radius: 5px;
 }
 
+.input {
+    border-width: 2px;
+    border-radius: 5px;
+}
+
 .input-active:focus {
     border-color: #4FE3C1;
 }

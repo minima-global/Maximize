@@ -117,7 +117,7 @@ const Splash = () => {
         <div className={`absolute transition-opacity duration-200 ease-in-out ${step === 5 ? 'opacity-1' : 'opacity-0'}`}>
           <div className="text-primary text-2xl mb-16">Let’s go</div>
         </div>
-        <div className="absolute bottom-20">Tap anywhere to continue</div>
+        <div className="absolute bottom-20"><span className="hidden lg:inline-block">Click</span><span className="inline-block lg:hidden">Tap</span> anywhere to continue</div>
       </div>
     </div>
   );

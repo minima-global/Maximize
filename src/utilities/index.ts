@@ -2,6 +2,7 @@ import { UTCDate } from "@date-fns/utc";
 import addSeconds from 'date-fns/addSeconds';
 import format from "date-fns/format";
 import { addMonths } from "date-fns";
+import { rateToMonths } from "../lib";
 
 const getPayoutTime = (transaction: any, currentBlock: number) => {
   try {
@@ -17,6 +18,19 @@ const getPayoutTime = (transaction: any, currentBlock: number) => {
 
       return format(newTime, "do MMMM yyyy");
     }
+  } catch {
+    return null;
+  }
+};
+
+export const getPayoutTimeSimplified = (transaction: any) => {
+  try {
+    const payoutRate = (window as any).MDS.util.getStateVariable(transaction, '105');
+    const now = new UTCDate();
+    const months = rateToMonths[payoutRate];
+    const newTime = addMonths(now, months);
+
+    return format(newTime, "do MMMM yyyy");
   } catch {
     return null;
   }

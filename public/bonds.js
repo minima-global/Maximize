@@ -8,7 +8,7 @@ var MAX_BOND 	= 0.001;
 var MIN_BOND 	= 0.000001;
 var HEAVY_LOAD 	= 50;
 
-function requestBond(currentblock, amount, bondtype){
+function requestBond(currentblock, amount, bondtype, password = null){
   return new Promise((resolve, reject) => {
 
     //Calculate the max values - these are all double checked on the server
@@ -58,6 +58,10 @@ function requestBond(currentblock, amount, bondtype){
         +" address:"+BOND_ADDRESS
         +" state:"+statevars;
 
+      if (password) {
+        cmd += ' password:' + password;
+      }
+
       MDS.cmd(cmd,function(resp){
         if(resp.pending){
           resolve(2);
@@ -71,7 +75,7 @@ function requestBond(currentblock, amount, bondtype){
   })
 }
 
-function cancelBond(coinid,amount,pubkey){
+function cancelBond(coinid,amount,pubkey,password = null){
   return new Promise((resolve) => {
     MDS.cmd("getaddress",function(resp){
 
@@ -86,6 +90,10 @@ function cancelBond(coinid,amount,pubkey){
         +";txninput  id:"+randid+" coinid:"+coinid
         +";txnoutput id:"+randid+" address:"+address+" amount:"+amount+" storestate:false"
         +";txnsign   id:"+randid+" publickey:"+pubkey + ' txnpostauto:true txndelete:true';
+
+      if (password) {
+        txn += ' password:' + password;
+      }
 
       MDS.cmd(txn,function(resp){
         console.log(JSON.stringify(resp));
@@ -121,5 +129,17 @@ function getMyCoins() {
 
       resolve(coins);
     });
+  });
+}
+
+function isLocked() {
+  return new Promise((resolve, reject) => {
+    MDS.cmd('status', function(r) {
+      if (r.response.locked) {
+        return resolve('locked');
+      }
+
+      resolve('not_locked');
+    })
   });
 }
