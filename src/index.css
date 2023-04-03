@@ -94,7 +94,7 @@ body {
 }
 
 .text-grey {
-    color: #91919D;
+    color: #7a7a90;
 }
 
 .text-grey-three {
@@ -172,6 +172,11 @@ pre {
 
 .input-active:focus {
     border-color: #4FE3C1;
+}
+
+.input-white {
+    background-color: white;
+    border-color: white;
 }
 
 .tooltip {

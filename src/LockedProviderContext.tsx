@@ -68,10 +68,10 @@ export const LockedProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       <form onSubmit={handleOnSubmit} className={`${callback ? '' : 'hidden'}`}>
         <div className="fixed z-30 top-0 left-0 w-full h-screen">
           <div className="relative z-20 flex items-center h-full">
-            <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
-              <h1 className="text-xl mb-6">Enter your vault password</h1>
+            <div className="bg-grey-three rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
+              <h1 className="text-xl mb-7">Enter your vault password</h1>
               <div className="relative">
-                <input type={visiblePassword ? 'text' : 'password'} className="input input-active input-grey bg-grey-three w-full px-4 py-3 pr-14 lg:mr-10 outline-none" value={password} onChange={(evt: React.ChangeEvent<HTMLInputElement>) => setPassword(evt.target.value)} />
+                <input type={visiblePassword ? 'text' : 'password'} className="input input-active input-white bg-grey-three w-full px-4 py-3 pr-14 lg:mr-10 outline-none" value={password} onChange={(evt: React.ChangeEvent<HTMLInputElement>) => setPassword(evt.target.value)} />
                 {visiblePassword && <img onClick={() => setVisiblePassword(false)} src={visibility} alt="visible" className="cursor-pointer w-6 h-6 absolute flex items-center top-3.5 right-4" />}
                 {!visiblePassword && <img onClick={() => setVisiblePassword( true)} src={visibilityOff} alt="visible off" className="cursor-pointer w-6 h-6 absolute flex items-center top-3.5 right-4" />}
               </div>

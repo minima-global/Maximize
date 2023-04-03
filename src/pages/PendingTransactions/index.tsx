@@ -39,7 +39,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white lg:pb-20">
+    <div className="min-h-screen bg-grey lg:pb-20">
       <TitleBar back={close} />
       {showWriteConfirm && (
         <div className="fixed z-10 top-0 left-0 w-full h-screen">
@@ -138,15 +138,15 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
           <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
         </div>
       )}
-      <div className="max-w-xl mx-auto lg:mt-14 flex flex-col gap-5 p-5">
+      <div className="max-w-xl mx-auto lg:mt-10 flex flex-col gap-5 p-5">
         <h1 className="text-2xl font-bold -mb-1">Your unconfirmed stakes</h1>
-        <p className="text-grey mb-3">
+        <p className="mb-3">
           You must wait at least 10 blocks before your stake is processed. You may cancel at any time before that. Once processed, your stake will show in FutureCash app to collect
           at the end of your lock up period.
         </p>
         {transactions && transactions.length === 0 && (
           <div>
-            <div className="bg-grey py-2 px-4 rounded-md text-left">
+            <div className="bg-white py-2 px-4 rounded-md text-left">
               <ul>
                 <li>No unconfirmed stakes yet.</li>
               </ul>
@@ -159,7 +159,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
               const payoutTime = getPayoutTimeSimplified(transaction);
 
               return (
-                <div key={transaction.coinid} className="bg-grey py-3 px-4 rounded-md">
+                <div key={transaction.coinid} className="bg-white py-3 px-4 rounded-md">
                   <div className="grid grid-cols-12 gap-2">
                     <div className="col-span-3 font-bold">Staked</div>
                     <div className="col-span-9 flex justify-end">{transaction.amount} MINIMA</div>

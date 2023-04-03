@@ -105,7 +105,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className={`h-full ${step === 'form' ? 'bg-grey' : ''}`}>
+    <div className={`h-full bg-grey`}>
       <TitleBar home showPendingTransaction={() => setShowPendingTransactions(true)} />
       {showHeavyLoad && (
         <div className="fixed z-10 top-0 left-0 w-full h-screen">
@@ -124,7 +124,6 @@ const Dashboard = () => {
       )}
       {step === 'form' && (
         <div className="max-w-lg mx-auto lg:pt-10 lg:pb-10">
-          <div className="bg-grey left-0 fixed w-screen h-screen -z-10" />
           <div className="flex flex-col gap-5 p-5">
             <p className="font-bold">Complete the fields below to stake your Native Minima (MINIMA)</p>
             <p>How much would you like to stake?</p>
@@ -135,7 +134,7 @@ const Dashboard = () => {
                 onFocus={() => setTypingOnFocus(true)}
                 onBlur={() => setTypingOnFocus(false)}
                 onChange={(evt: React.ChangeEvent<HTMLInputElement>) => setPrice(evt.target.value)}
-                className="bg-transparent input input-active w-full px-4 py-3 pr-20 outline-none"
+                className="bg-transparent input input-active input-white w-full px-4 py-3 pr-20 outline-none"
                 placeholder={`Min ${config.minPrice} / Max ${config.maxPrice}`}
               />
               <div onClick={() => setPrice(config.maxPrice)} className="cursor-pointer text-grey-three absolute top-0 h-full flex items-center right-4">
@@ -161,7 +160,7 @@ const Dashboard = () => {
                 <div onClick={() => setShowForHowLongTooltip(false)} className="fixed w-full h-full z-10 left-0 top-0" />
               </div>
             )}
-            <div className="cursor-pointer bg-grey-three w-full rounded-md w-full relative select-none">
+            <div className="cursor-pointer bg-white w-full rounded-md w-full relative select-none">
               <div onClick={() => setShowSelect((prevState) => !prevState)}>
                 {!percent && <div className="bg-transparent w-full px-4 py-3 pr-20 outline-none">Select stake timeframe</div>}
                 {percent && (
@@ -246,10 +245,10 @@ const Dashboard = () => {
         </div>
       )}
       {step === 'summary' && (
-        <div className="max-w-lg mx-auto mt-0 lg:mt-12 h-full lg:h-fit bg-white flex flex-col">
+        <div className="max-w-lg mx-auto mt-0 lg:mt-12 h-full lg:h-fit flex flex-col">
           <div className="flex-grow flex flex-col gap-5 p-5">
             <h1 className="text-2xl font-bold mb-2">Summary</h1>
-            <div className="bg-grey py-3 px-4 rounded-md">
+            <div className="bg-white py-3 px-4 rounded-md">
               <div className="grid grid-cols-12 gap-1">
                 <div className="col-span-3 font-bold">Staked</div>
                 <div className="col-span-9 flex justify-end">{price} MINIMA</div>
@@ -274,7 +273,7 @@ const Dashboard = () => {
                 <div className="col-span-9 flex justify-end">{getEstimatedPayoutTime(percent)}</div>
               </div>
             </div>
-            <div className="bg-grey px-4 py-3 rounded-md text-sm">
+            <div className="bg-white px-4 py-3 rounded-md text-sm">
               <label className="flex items-center cursor-pointer">
                 <input type="checkbox" className="checkbox" readOnly={true} checked={confirm} onClick={() => setConfirm((prevState) => !prevState)} />
                 <span className="ml-4">I understand that once my stake is processed, my staked Minima and the additional Minima yield I earn will be locked until the date shown above.</span>
@@ -282,7 +281,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div>
-            <div className="fixed lg:relative w-full bg-white p-6 bottom-0 left-0 text-center">
+            <div className="fixed lg:relative w-full p-6 bottom-0 left-0 text-center">
               <div className="flex flex-col gap-3">
                 {isLoading && (
                   <button className="bg-gray-100 py-4 text-white font-medium rounded-md mb-2">
