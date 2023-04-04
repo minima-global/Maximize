@@ -94,6 +94,32 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
               // do nothing
             });
         }
+
+        if (msg.event === "MDS_TIMER_60SECONDS") {
+          // get balance
+          availableBalance().then((response: any) => {
+            setBalance(Number(response));
+          });
+
+          // get all coins
+          (window as any)
+            .getCoins()
+            .catch((reason: any) => {
+              if (reason === 'HEAVY_LOAD') {
+                setHeavyLoad(true);
+              }
+            });
+
+          // get my coins
+          (window as any)
+            .getMyCoins()
+            .then((response: any) => {
+              setTransactions(response);
+            })
+            .catch(() => {
+              // do nothing
+            });
+        }
       });
     }
   }, [loaded]);
