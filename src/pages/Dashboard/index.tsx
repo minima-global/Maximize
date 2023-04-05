@@ -213,6 +213,9 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
+            <div className="italic text-grey">
+              Timeframe is shown in months but calculated on average block time, your final timeframe will vary slightly based on actual block times.
+            </div>
             <div className={`bg-main w-full rounded-md w-full relative py-3 px-4 ${predictedMinima === '-' ? 'opacity-50' : ''}`}>
               <p className="mb-1">You will receive</p>
               <p className="font-bold">{predictedMinima} Minima</p>

@@ -7,7 +7,7 @@ var BOND_ADDRESS = "MxG0861MPQ3ZQTM4GFTZ0UJA74Y48A4GDPYM1NTVKDTU0B34BFDV86G5A0PD
 /**
  * Config Values
  */
-var MIN_BOND 	= 10;
+var MIN_BOND 	= 1;
 var MAX_BOND 	= 50000;
 var HEAVY_LOAD 	= 50;
 // How many blocks in a day
