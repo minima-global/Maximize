@@ -1,6 +1,6 @@
 const config = {
-  minPrice: '0.000001',
-  maxPrice: '0.001',
+  minPrice: (window as any).MIN_BOND,
+  maxPrice: (window as any).MAX_BOND,
 };
 
 export default config;

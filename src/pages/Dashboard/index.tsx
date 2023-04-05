@@ -74,14 +74,16 @@ const Dashboard = () => {
 
   const createBond = async () => {
     try {
+      setIsLoading(true);
+
       await checkIsLocked(async (password) => {
-        setIsLoading(true);
         const currentBlock = await block();
         const response = await (window as any).requestBond(currentBlock, price, percent?.rate, password);
         setPrice('');
         setPercent(null);
 
         if (response === 2) {
+          setIsLoading(false);
           return setStep('confirm');
         }
 
@@ -90,9 +92,8 @@ const Dashboard = () => {
         setIsLoading(false);
       });
     } catch (e) {
-      alert('An unknown error occurred');
-    } finally {
       setIsLoading(false);
+      alert('An unknown error occurred');
     }
   };
 
@@ -308,7 +309,7 @@ const Dashboard = () => {
                   </button>
                 )}
                 {!isLoading && (
-                  <button onClick={createBond} disabled={!confirm} className="bg-dark-grey py-4 text-white font-medium rounded-md mb-2">
+                  <button onClick={createBond} disabled={!confirm || isLoading} className="bg-dark-grey py-4 text-white font-medium rounded-md mb-2">
                     Confirm
                   </button>
                 )}
