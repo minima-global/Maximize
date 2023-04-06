@@ -7,11 +7,12 @@ import TitleBar from '../../components/TitleBar';
 import { useContext, useEffect, useState } from 'react';
 import { appContext } from '../../AppContext';
 import config from '../../config';
-import { block } from '../../__minima__';
+import { availableBalance, block } from "../../__minima__";
 import { Link } from 'react-router-dom';
 import PendingTransactions from '../PendingTransactions';
 import { getEstimatedPayoutTime, toFixedIfNecessary } from "../../utilities";
 import { lockedProviderContext } from "../../LockedProviderContext";
+import Decimal from "decimal.js";
 
 const Dashboard = () => {
   const { checkIsLocked } = useContext(lockedProviderContext);
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const [showForHowLongTooltip, setShowForHowLongTooltip] = React.useState(false);
   const [confirm, setConfirm] = useState(false);
   const [showHeavyLoad, setShowHeavyLoad] = useState(false);
+  const [showInsufficientBalance, setShowInsufficientBalance] = useState(false);
 
   // reset confirm status if the step changes
   useEffect(() => {
@@ -76,6 +78,15 @@ const Dashboard = () => {
     try {
       setIsLoading(true);
 
+      const balance = await availableBalance();
+      const balanceAsDecimal = new Decimal(balance as string);
+      const priceAsDecimal = new Decimal(price);
+
+      if (priceAsDecimal.greaterThan(balanceAsDecimal)) {
+        setIsLoading(false);
+        return setShowInsufficientBalance(true);
+      }
+
       await checkIsLocked(async (password) => {
         const currentBlock = await block();
         const response = await (window as any).requestBond(currentBlock, price, percent?.rate, password);
@@ -115,6 +126,21 @@ const Dashboard = () => {
               <h1 className="text-xl mb-2">We are currently experiencing a high demand for staking. Please try again later.</h1>
               <div className="flex flex-col gap-3">
                 <button onClick={() => setShowHeavyLoad(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
+        </div>
+      )}
+      {showInsufficientBalance && (
+        <div className="fixed z-10 top-0 left-0 w-full h-screen">
+          <div className="relative z-20 flex items-center h-full">
+            <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
+              <h1 className="text-xl mb-2">Insufficient sendable balance. Please try again later.</h1>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => setShowInsufficientBalance(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
                   Continue
                 </button>
               </div>
