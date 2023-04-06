@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useEffect, useState } from 'react';
-import { availableBalance, sql, block } from './__minima__';
+import { availableBalance, sql, getFullBlock } from "./__minima__";
 
 export const appContext = createContext({} as any);
 
@@ -8,6 +8,7 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [loaded, setLoaded] = useState(false);
   const [balance, setBalance] = useState(0);
   const [currentBlock, setCurrentBlock] = useState<number | null>(null);
+  const [currentBlockTime, setCurrentBlockTime] = useState<number | null>(null);
   const [heavyLoad, setHeavyLoad] = useState(false);
   const [transactions, setTransactions] = useState();
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -39,8 +40,9 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           });
 
           // get current block
-          block().then((response: any) => {
-            setCurrentBlock(Number(response));
+          getFullBlock().then((response: any) => {
+            setCurrentBlock(Number(response.block));
+            setCurrentBlockTime(response.date);
           });
 
           // get all coins
@@ -67,6 +69,7 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
         if(msg.event === "NEWBLOCK"){
           setCurrentBlock(Number(msg.data.txpow.header.block));
+          setCurrentBlockTime(msg.data.txpow.header.date)
         }
 
         if (msg.event === "NEWBALANCE") {
@@ -142,6 +145,7 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     balance,
     heavyLoad,
     currentBlock,
+    currentBlockTime,
     transactions,
     _notification,
     showOnboarding,

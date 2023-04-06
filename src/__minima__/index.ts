@@ -41,6 +41,18 @@ export function block() {
   });
 }
 
+export function getFullBlock() {
+  return new Promise((resolve, reject) => {
+    (window as any).MDS.cmd('block', function(response: any) {
+      if (response.status) {
+        return resolve(response.response);
+      }
+
+      return reject();
+    });
+  });
+}
+
 const exports = {};
 
 export default exports;

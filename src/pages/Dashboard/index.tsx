@@ -15,7 +15,7 @@ import { lockedProviderContext } from "../../LockedProviderContext";
 
 const Dashboard = () => {
   const { checkIsLocked } = useContext(lockedProviderContext);
-  const { balance, heavyLoad, showOnboarding } = useContext(appContext);
+  const { currentBlockTime, currentBlock, balance, heavyLoad, showOnboarding } = useContext(appContext);
 
   const [price, setPrice] = React.useState('');
   const [step, setStep] = React.useState('form');
@@ -127,6 +127,12 @@ const Dashboard = () => {
         <div className="max-w-lg mx-auto lg:pt-10 lg:pb-10">
           <div className="flex flex-col gap-5 p-5">
             <p className="font-bold">Complete the fields below to stake your Native Minima (MINIMA)</p>
+            {currentBlock && currentBlockTime && (
+              <section className="bg-grey-three p-4 rounded text-sm">
+                <p>Top block: <strong>{currentBlock}</strong></p>
+                <p>Top block time: <strong>{currentBlockTime}</strong></p>
+              </section>
+            )}
             <p>How much would you like to stake?</p>
             <div className="bg-grey-three w-full rounded-md w-full relative">
               <input
