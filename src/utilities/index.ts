@@ -50,4 +50,9 @@ const toFixedIfNecessary = (value: string, dp: number = 9) => {
   return +parseFloat(value).toFixed( dp );
 }
 
-export { getPayoutTime, toFixedIfNecessary, getEstimatedPayoutTime };
+const compoundInterest = (principal: number, time: number, rate: number, compond: number) => {
+  const amount = principal * (Math.pow((1 + (rate / compond)), (compond * time)));
+  return amount - principal;
+};
+
+export { getPayoutTime, toFixedIfNecessary, getEstimatedPayoutTime, compoundInterest };

@@ -10,7 +10,7 @@ import config from '../../config';
 import { block } from '../../__minima__';
 import { Link } from 'react-router-dom';
 import PendingTransactions from '../PendingTransactions';
-import { getEstimatedPayoutTime, toFixedIfNecessary } from '../../utilities';
+import { getEstimatedPayoutTime, toFixedIfNecessary } from "../../utilities";
 import { lockedProviderContext } from "../../LockedProviderContext";
 
 const Dashboard = () => {
