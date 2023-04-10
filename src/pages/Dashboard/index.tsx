@@ -149,7 +149,7 @@ const Dashboard = () => {
         <div className="fixed z-10 top-0 left-0 w-full h-screen">
           <div className="relative z-20 flex items-center h-full">
             <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
-            <h1 className="text-xl mb-2">{showError || "An error occurred whilst creating the bond, please try again later."}</h1>
+            <h1 className="text-xl mb-2">{typeof showError === 'string' ? showError : "An error occurred whilst creating the bond, please try again later."}</h1>
               <div className="flex flex-col gap-3">
                 <button onClick={() => setShowError(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
                   Continue

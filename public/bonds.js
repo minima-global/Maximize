@@ -47,7 +47,7 @@ function requestBond(currentblock, amount, bondtype, password = null){
       //MDS.log(JSON.stringify(resp));
 
       if (!resp.status) {
-        return reject(0);
+        return reject(1);
       }
 
       var address 	= resp.response.miniaddress;
