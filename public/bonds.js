@@ -46,6 +46,10 @@ function requestBond(currentblock, amount, bondtype, password = null){
     MDS.cmd("getaddress",function(resp){
       //MDS.log(JSON.stringify(resp));
 
+      if (!resp.status) {
+        return reject(0);
+      }
+
       var address 	= resp.response.miniaddress;
       var pubkey  	= resp.response.publickey;
 
@@ -78,8 +82,12 @@ function requestBond(currentblock, amount, bondtype, password = null){
 }
 
 function cancelBond(coinid,amount,pubkey,password = null){
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     MDS.cmd("getaddress",function(resp){
+
+      if (!resp.status) {
+        return reject(1);
+      }
 
       //Get an address
       var address = resp.response.miniaddress;

@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [confirm, setConfirm] = useState(false);
   const [showHeavyLoad, setShowHeavyLoad] = useState(false);
   const [showInsufficientBalance, setShowInsufficientBalance] = useState(false);
+  const [showError, setShowError] = useState<string | boolean>(false);
 
   // reset confirm status if the step changes
   useEffect(() => {
@@ -88,23 +89,33 @@ const Dashboard = () => {
       }
 
       await checkIsLocked(async (password) => {
-        const currentBlock = await block();
-        const response = await (window as any).requestBond(currentBlock, price, percent?.rate, password);
-        setPrice('');
-        setPercent(null);
-
-        if (response === 2) {
+        try {
+          const currentBlock = await block();
+          const response = await (window as any).requestBond(currentBlock, price, percent?.rate, password);
+          setPrice('');
+          setPercent(null);
+  
+          if (response === 2) {
+            setIsLoading(false);
+            return setStep('confirm');
+          }
+  
+          setStep('form');
+          setShowPendingTransactions(true);
           setIsLoading(false);
-          return setStep('confirm');
-        }
+        } catch (e) {
+          setIsLoading(false);
 
-        setStep('form');
-        setShowPendingTransactions(true);
-        setIsLoading(false);
+          if (e === 1) {
+            return setShowError('An error occurred whilst creating the stake, could not get a valid address.');
+          }
+
+          setShowError(true);
+        }
       });
     } catch (e) {
       setIsLoading(false);
-      alert('An unknown error occurred');
+      setShowError(true);
     }
   };
 
@@ -126,6 +137,21 @@ const Dashboard = () => {
               <h1 className="text-xl mb-2">We are currently experiencing a high demand for staking. Please try again later.</h1>
               <div className="flex flex-col gap-3">
                 <button onClick={() => setShowHeavyLoad(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
+        </div>
+      )}
+      {showError && (
+        <div className="fixed z-10 top-0 left-0 w-full h-screen">
+          <div className="relative z-20 flex items-center h-full">
+            <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
+            <h1 className="text-xl mb-2">{showError || "An error occurred whilst creating the bond, please try again later."}</h1>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => setShowError(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
                   Continue
                 </button>
               </div>

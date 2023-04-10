@@ -17,6 +17,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
   const [cancelBondAmount, setCancelBondAmount] = useState(null);
   const [cancelBondPublicKey, setCancelBondPublicKey] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const cancelBond = async () => {
     try {
@@ -32,7 +33,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
 
       setShowWriteConfirm(true);
     } catch {
-      alert('An error occurred whilst cancelling the bond, please try again later...');
+      setShowError(true);
     } finally {
       setIsLoading(false);
     }
@@ -48,6 +49,21 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
               <h1 className="text-xl mb-3">Your cancel request will be processed in the next block.</h1>
               <div className="flex flex-col gap-3">
                 <button onClick={() => setShowWriteConfirm(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="bg-black opacity-70 absolute top-0 left-0 w-full h-full z-10"></div>
+        </div>
+      )}
+      {showError && (
+        <div className="fixed z-10 top-0 left-0 w-full h-screen">
+          <div className="relative z-20 flex items-center h-full">
+            <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
+              <h1 className="text-xl mb-2">An error occurred whilst cancelling the bond, please try again later.</h1>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => setShowError(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
                   Continue
                 </button>
               </div>
