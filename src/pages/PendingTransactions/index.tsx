@@ -34,9 +34,9 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
       setShowWriteConfirm(true);
     } catch (e) {
       if (e === 1) {
-        return setShowError('An error occurred whilst cancelling the stake, could not get a valid address.')
-      };
-    
+        return setShowError('An error occurred whilst cancelling the stake, could not get a valid address.');
+      }
+
       setShowError(true);
     } finally {
       setIsLoading(false);
@@ -95,9 +95,7 @@ const PendingTransactions: React.FC<{ close?: Function }> = ({ close }) => {
                   </svg>
                   Long press the command and select 'Accept'. That's it!
                 </p>
-                <p className="hidden lg:block max-w-md mx-auto px-2 mb-5 lg:mb-0">
-                  To accept the transaction, go to the MiniDapp hub and click Pending Actions. Click Accept for the Maximize command, then click OK. That's it!
-                </p>
+                <p className="hidden lg:block max-w-md mx-auto px-2 mb-5 lg:mb-0">To accept the transaction, go to the Pending MiniDapp and accept Maximize command. That's it!</p>
                 <p className="lg:mt-4">Once accepted, your cancellation will be processed in the next block.</p>
                 <div className="hidden lg:block mt-8 mb-10 max-w-sm mx-auto">
                   <button onClick={() => setShowConfirm(false)} className="w-full bg-dark-grey py-4 text-white font-medium rounded-md mb-3">

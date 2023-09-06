@@ -402,7 +402,7 @@ const Dashboard = () => {
                   Long press the command and select 'Accept'. That's it!
                 </p>
                 <p className="hidden lg:block max-w-md mx-auto px-2 mb-5 lg:mb-0">
-                  To accept the transaction, go to the MiniDapp hub and click Pending Actions. Click Accept for the Maximize command, then click OK. That's it!
+                  To accept the transaction, go to the Pending MiniDapp and accept Maximize command.  That's it!
                 </p>
                 <p className="lg:mt-4">
                   Once accepted, please wait for your stake to appear, it will only show after the next block
