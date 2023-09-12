@@ -1,5 +1,13 @@
 # Changelog
 
+##### [1.2.1] - 13 June 23
+
+- update mds.js
+
+##### [1.2.0] - 13 June 23
+
+- text copy updates
+  
 ##### [1.1.1] - 13 June 23
 
 - Added support for Android.showTitleBar
