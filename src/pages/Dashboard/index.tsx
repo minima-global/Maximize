@@ -7,12 +7,12 @@ import TitleBar from '../../components/TitleBar';
 import { useContext, useEffect, useState } from 'react';
 import { appContext } from '../../AppContext';
 import config from '../../config';
-import { availableBalance, block } from "../../__minima__";
+import { availableBalance, block } from '../../__minima__';
 import { Link } from 'react-router-dom';
 import PendingTransactions from '../PendingTransactions';
-import { getEstimatedPayoutTime, toFixedIfNecessary } from "../../utilities";
-import { lockedProviderContext } from "../../LockedProviderContext";
-import Decimal from "decimal.js";
+import { getEstimatedPayoutTime, toFixedIfNecessary } from '../../utilities';
+import { lockedProviderContext } from '../../LockedProviderContext';
+import Decimal from 'decimal.js';
 
 const Dashboard = () => {
   const { checkIsLocked } = useContext(lockedProviderContext);
@@ -94,12 +94,12 @@ const Dashboard = () => {
           const response = await (window as any).requestBond(currentBlock, price, percent?.rate, password);
           setPrice('');
           setPercent(null);
-  
+
           if (response === 2) {
             setIsLoading(false);
             return setStep('confirm');
           }
-  
+
           setStep('form');
           setShowPendingTransactions(true);
           setIsLoading(false);
@@ -149,7 +149,7 @@ const Dashboard = () => {
         <div className="fixed z-10 top-0 left-0 w-full h-screen">
           <div className="relative z-20 flex items-center h-full">
             <div className="bg-white rounded p-8 mx-auto text-center" style={{ maxWidth: '360px' }}>
-            <h1 className="text-xl mb-2">{typeof showError === 'string' ? showError : "An error occurred whilst creating the stake, please try again later."}</h1>
+              <h1 className="text-xl mb-2">{typeof showError === 'string' ? showError : 'An error occurred whilst creating the stake, please try again later.'}</h1>
               <div className="flex flex-col gap-3">
                 <button onClick={() => setShowError(false)} className="bg-dark-grey mt-4 py-4 text-white font-medium rounded-md">
                   Continue
@@ -181,8 +181,12 @@ const Dashboard = () => {
             <p className="font-bold">Complete the fields below to stake your Native Minima (MINIMA)</p>
             {currentBlock && currentBlockTime && (
               <section className="bg-grey-three p-4 rounded text-sm">
-                <p>Top block: <strong>{currentBlock}</strong></p>
-                <p>Top block time: <strong>{currentBlockTime}</strong></p>
+                <p>
+                  Top block: <strong>{currentBlock}</strong>
+                </p>
+                <p>
+                  Top block time: <strong>{currentBlockTime}</strong>
+                </p>
               </section>
             )}
             <p>How much would you like to stake?</p>
@@ -213,8 +217,8 @@ const Dashboard = () => {
             {showForHowLongTooltip && (
               <div className=" relative">
                 <div className="tooltip absolute z-20">
-                  The approximate lock up duration of your stake. During this time, your total stake including yield will be visible on the Pending page in the FutureCash
-                  MiniDapp. At the end of this period, it will be shown on the Ready page in FutureCash.
+                  The approximate lock up duration of your stake. During this time, your total stake including yield will be visible on the Pending page in the FutureCash MiniDapp.
+                  At the end of this period, it will be shown on the Ready page in FutureCash.
                 </div>
                 <div onClick={() => setShowForHowLongTooltip(false)} className="fixed w-full h-full z-10 left-0 top-0" />
               </div>
@@ -338,7 +342,9 @@ const Dashboard = () => {
             <div className="bg-white px-4 py-3 rounded-md text-sm">
               <label className="flex items-center cursor-pointer">
                 <input type="checkbox" className="checkbox" readOnly={true} checked={confirm} onClick={() => setConfirm((prevState) => !prevState)} />
-                <span className="ml-4">I understand that once my stake is processed, my staked Minima and the additional Minima yield I earn will be locked until the date shown above.</span>
+                <span className="ml-4">
+                  I understand that once my stake is processed, my staked Minima and the additional Minima yield I earn will be locked until the date shown above.
+                </span>
               </label>
             </div>
           </div>
@@ -392,21 +398,10 @@ const Dashboard = () => {
               <div className="mb-5">
                 <h1 className="text-3xl font-bold mb-5">Action Required</h1>
                 <p className="block lg:hidden max-w-md mx-auto px-2 mb-5 lg:mb-0">
-                  To accept the transaction, go to the Minima app Home screen and press{' '}
-                  <svg className="inline lg:ml-1 mr-1 lg:mr-2 mb-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M8.9998 17.5025C7.82045 17.5025 6.71387 17.2796 5.68005 16.8338C4.64623 16.388 3.74685 15.7826 2.9819 15.0177C2.21696 14.2528 1.61158 13.3534 1.16578 12.3196C0.719973 11.2857 0.49707 10.1791 0.49707 8.9998C0.49707 7.82045 0.719973 6.71387 1.16578 5.68005C1.61158 4.64623 2.21696 3.74685 2.9819 2.9819C3.74685 2.21696 4.64623 1.61158 5.68005 1.16578C6.71387 0.719973 7.82045 0.49707 8.9998 0.49707C10.1791 0.49707 11.2857 0.719973 12.3196 1.16578C13.3534 1.61158 14.2528 2.21696 15.0177 2.9819C15.7826 3.74685 16.388 4.64623 16.8338 5.68005C17.2796 6.71387 17.5025 7.82045 17.5025 8.9998C17.5025 9.36816 17.4825 9.72957 17.4425 10.084C17.4025 10.4385 17.3372 10.786 17.2466 11.1266C17.0223 10.8745 16.7609 10.6687 16.4624 10.5093C16.164 10.3499 15.842 10.2524 15.4966 10.2167C15.535 10.0217 15.5629 9.82234 15.5804 9.61867C15.5979 9.41502 15.6067 9.20873 15.6067 8.9998C15.6067 7.15198 14.9675 5.58888 13.6891 4.31049C12.4107 3.03211 10.8476 2.39292 8.9998 2.39292C7.15198 2.39292 5.58888 3.03211 4.31049 4.31049C3.03211 5.58888 2.39292 7.15198 2.39292 8.9998C2.39292 10.8476 3.03211 12.4107 4.31049 13.6891C5.58888 14.9675 7.15198 15.6067 8.9998 15.6067C9.69817 15.6067 10.3636 15.5058 10.9962 15.3042C11.6287 15.1025 12.2125 14.8191 12.7475 14.4541C12.9175 14.7367 13.1365 14.984 13.4045 15.1961C13.6724 15.4082 13.9652 15.5695 14.2829 15.68C13.5612 16.2528 12.7528 16.6998 11.8576 17.0209C10.9624 17.342 10.0098 17.5025 8.9998 17.5025ZM15.1511 14.1642C14.8295 14.1642 14.5564 14.0519 14.3318 13.8273C14.1071 13.6026 13.9948 13.3295 13.9948 13.0079C13.9948 12.6864 14.1071 12.4133 14.3318 12.1887C14.5564 11.964 14.8295 11.8517 15.1511 11.8517C15.4726 11.8517 15.7457 11.964 15.9704 12.1887C16.195 12.4133 16.3073 12.6864 16.3073 13.0079C16.3073 13.3295 16.195 13.6026 15.9704 13.8273C15.7457 14.0519 15.4726 14.1642 15.1511 14.1642ZM11.6751 12.9464L8.09174 9.36303V4.85805H9.90786V8.62661L12.9563 11.6751L11.6751 12.9464Z"
-                      fill="#08090B"
-                    />
-                  </svg>
-                  Long press the command and select 'Accept'. That's it!
+                  To accept the transaction navigate to the Pending Minidapp on your Minihub and accept the pending action.
                 </p>
-                <p className="hidden lg:block max-w-md mx-auto px-2 mb-5 lg:mb-0">
-                  To accept the transaction, go to the Pending MiniDapp and accept Maximize command.  That's it!
-                </p>
-                <p className="lg:mt-4">
-                  Once accepted, please wait for your stake to appear, it will only show after the next block
-                </p>
+                <p className="hidden lg:block max-w-md mx-auto px-2 mb-5 lg:mb-0">To accept the transaction, go to the Pending MiniDapp and accept Maximize command. That's it!</p>
+                <p className="lg:mt-4">Once accepted, please wait for your stake to appear, it will only show after the next block</p>
                 <div className="hidden lg:block mt-8 mb-10 max-w-sm mx-auto">
                   <button
                     onClick={() => {
